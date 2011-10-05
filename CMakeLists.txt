@@ -33,6 +33,7 @@ INCLUDE_DIRECTORIES(
 SET (CORE_LIBRARY_SOURCES
     ./lib/core/ColorSpaceConvertor
     ./lib/core/ColorBasedROIExtractorHSV
+    ./lib/core/SimplePointCloudGeneratorCube
 )
 
 # compile libraries

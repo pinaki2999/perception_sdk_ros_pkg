@@ -18,8 +18,6 @@ namespace BRICS_3D {
 
 class IColorBasedROIExtractor {
 public:
-	IColorBasedROIExtractor();
-	virtual ~IColorBasedROIExtractor();
 
 	/**
 	 * Extracts subset of input point cloud based on color-properties
