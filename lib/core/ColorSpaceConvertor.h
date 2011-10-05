@@ -21,13 +21,13 @@ private:
 	double epsilon;
 
 	/**
-	 * Finds the minimum out of three float values
+	 * Finds the minimum out of three double values
 	 * @param a
 	 * @param b
 	 * @param c
 	 * @return	The minimum value
 	 */
-	inline float minVal(float a, float b, float c){
+	inline double minVal(double a, double b, double c){
 
 		if(a < b){
 			if(a < c){
@@ -47,13 +47,13 @@ private:
 
 
 	/**
-	 * Finds the maximum out of three float values
+	 * Finds the maximum out of three double values
 	 * @param a
 	 * @param b
 	 * @param c
 	 * @return	The maximum value
 	 */
-	inline float maxVal(float a, float b, float c){
+	inline double maxVal(double a, double b, double c){
 
 		if(a > b){
 			if(a > c){
@@ -82,7 +82,7 @@ public:
 
 	/**
 	 *
-     	R, G and B are converted to floating-point format and scaled to fit 0..1 range
+     	R, G and B are scaled to fit 0..1 range
 
      	V <- max(R,G,B)
      	S <- (V-min(R,G,B))/V   if V≠0, 0 otherwise

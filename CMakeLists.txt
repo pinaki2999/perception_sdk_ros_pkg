@@ -16,10 +16,23 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+# add library directories (-L)
+LINK_DIRECTORIES(
+    /home/pinaki/hack-arena/BRICS_3D/lib/
+)
+
+# add include directories (-I)
+INCLUDE_DIRECTORIES(
+     /home/pinaki/hack-arena/BRICS_3D/src
+     /home/pinaki/hack-arena/BRICS_3D/external
+)
+
+
 
 # define sources lists for libraries (cpp files)
 SET (CORE_LIBRARY_SOURCES
     ./lib/core/ColorSpaceConvertor
+    ./lib/core/ColorBasedROIExtractorHSV
 )
 
 # compile libraries
