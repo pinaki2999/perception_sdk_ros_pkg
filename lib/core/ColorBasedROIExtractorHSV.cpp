@@ -11,113 +11,113 @@
 namespace BRICS_3D {
 
 ColorBasedROIExtractorHSV::ColorBasedROIExtractorHSV() {
-	this->max_h = 255;
-	this->min_h	= 0;
+	this->maxH = 255;
+	this->minH	= 0;
 
-	this->max_s = 255;
-	this->min_s	= 0;
+	this->maxS = 255;
+	this->minS	= 0;
 
-	this->max_v = 255;
-	this->min_v	= 0;
+	this->maxV = 255;
+	this->minV	= 0;
 
 }
 
-double ColorBasedROIExtractorHSV::getMax_h() const
+double ColorBasedROIExtractorHSV::getMaxH() const
 {
-	return max_h;
+	return maxH;
 }
 
-double ColorBasedROIExtractorHSV::getMax_s() const
+double ColorBasedROIExtractorHSV::getMaxS() const
 {
-	return max_s;
+	return maxS;
 }
 
-double ColorBasedROIExtractorHSV::getMax_v() const
+double ColorBasedROIExtractorHSV::getMaxV() const
 {
-	return max_v;
+	return maxV;
 }
 
-double ColorBasedROIExtractorHSV::getMin_h() const
+double ColorBasedROIExtractorHSV::getMinH() const
 {
-	return min_h;
+	return minH;
 }
 
-double ColorBasedROIExtractorHSV::getMin_s() const
+double ColorBasedROIExtractorHSV::getMinS() const
 {
-	return min_s;
+	return minS;
 }
 
-double ColorBasedROIExtractorHSV::getMin_v() const
+double ColorBasedROIExtractorHSV::getMinV() const
 {
-	return min_v;
+	return minV;
 }
 
-void ColorBasedROIExtractorHSV::setMax_h(double max_h)
+void ColorBasedROIExtractorHSV::setMaxH(double maxH)
 {
-	this->max_h = max_h;
+	this->maxH = maxH;
 }
 
-void ColorBasedROIExtractorHSV::setMax_s(double max_s)
+void ColorBasedROIExtractorHSV::setMaxS(double maxS)
 {
-	this->max_s = max_s;
+	this->maxS = maxS;
 }
 
-void ColorBasedROIExtractorHSV::setMax_v(double max_v)
+void ColorBasedROIExtractorHSV::setMaxV(double maxV)
 {
-	this->max_v = max_v;
+	this->maxV = maxV;
 }
 
-void ColorBasedROIExtractorHSV::setMin_h(double min_h)
+void ColorBasedROIExtractorHSV::setMinH(double minH)
 {
-	this->min_h = min_h;
+	this->minH = minH;
 }
 
-void ColorBasedROIExtractorHSV::setMin_s(double min_s)
+void ColorBasedROIExtractorHSV::setMinS(double minS)
 {
-	this->min_s = min_s;
+	this->minS = minS;
 }
 
-void ColorBasedROIExtractorHSV::setMin_v(double min_v)
+void ColorBasedROIExtractorHSV::setMinV(double minV)
 {
-	this->min_v = min_v;
+	this->minV = minV;
 }
 
 ColorBasedROIExtractorHSV::~ColorBasedROIExtractorHSV() {}
 
-void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud3D &in_cloud,
-		BRICS_3D::PointCloud3D &out_cloud){
+void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud3D *in_cloud,
+		BRICS_3D::PointCloud3D *out_cloud){
 
-	if(this->min_s == 0 && this->min_h == 0 && this->min_v == 0 && this->max_h == 255 &&
-			this->max_s == 255 && this->max_v == 255) {
+	if(this->minS == 0 && this->minH == 0 && this->minV == 0 && this->maxH == 255 &&
+			this->maxS == 255 && this->maxV == 255) {
 		//ToDo print error that the limits were not initialized
 	}
 
-	int cloudSize =	in_cloud.getSize();
-	double temp_h, temp_s, temp_v, temp_r, temp_g, temp_b;
-	char temp_c;
+	int cloudSize =	in_cloud->getSize();
+	double tempH, tempS, tempV, tempR, tempG, tempB;
+	char tempChar;
 	bool passed;
 	BRICS_3D::ColorSpaceConvertor colorConvertor;
-	BRICS_3D::Point3D temp_point3D;
-	out_cloud.getPointCloud()->clear();
+	BRICS_3D::Point3D tempPoint3D;
+	out_cloud->getPointCloud()->clear();
 
 	for (unsigned int i = 0; i < cloudSize; i++) {
 
 		passed = false;
 		//Getting the HSV values for the RGB points
-		temp_c = in_cloud.getPointCloud()->data()[i].red;
-		temp_r = atof( &temp_c );
+		tempChar = in_cloud->getPointCloud()->data()[i].red;
+		tempR = atof( &tempChar );
 
-		temp_c = in_cloud.getPointCloud()->data()[i].green;
-		temp_g = atof( &temp_c );
+		tempChar = in_cloud->getPointCloud()->data()[i].green;
+		tempG = atof( &tempChar );
 
-		temp_c = in_cloud.getPointCloud()->data()[i].blue;
-		temp_b = atof( &temp_c );
+		tempChar = in_cloud->getPointCloud()->data()[i].blue;
+		tempB = atof( &tempChar );
 
-		colorConvertor.rgbToHsv(temp_r, temp_g, temp_b, temp_h, temp_s, temp_v);
+		colorConvertor.rgbToHsv(tempR, tempG, tempB, &tempH, &tempS, &tempV);
 
 		//Checking the values with the set limits
-		if (temp_h < max_h && temp_h > min_h) {
-			if (temp_s < min_s && temp_s > max_s) {
+		if (tempH < maxH && tempH > minH) {
+			if (tempS < minS && tempS > maxS) {
 				passed=true;
 			}
 		}
@@ -125,10 +125,10 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 		//Add to the out_cloud if the values are passed
 
 		if(passed){
-			temp_point3D.setX(in_cloud.getPointCloud()->data()[i].getX());
-			temp_point3D.setY(in_cloud.getPointCloud()->data()[i].getY());
-			temp_point3D.setZ(in_cloud.getPointCloud()->data()[i].getZ());
-			out_cloud.addPoint(temp_point3D);
+			tempPoint3D.setX(in_cloud->getPointCloud()->data()[i].getX());
+			tempPoint3D.setY(in_cloud->getPointCloud()->data()[i].getY());
+			tempPoint3D.setZ(in_cloud->getPointCloud()->data()[i].getZ());
+			out_cloud->addPoint(tempPoint3D);
 		}
 
 	}

@@ -18,20 +18,20 @@ private:
 	/**
 	 * Maximum and minimum values for Hue
 	 */
-	double max_h;
-	double min_h;
+	double maxH;
+	double minH;
 
 	/**
 	 * Maximum and minimum values for Saturation
 	 */
-	double max_s;
-	double min_s;
+	double maxS;
+	double minS;
 
 	/**
 	 * Maximum and minimum values for Lightness(V)
 	 */
-	double max_v;
-	double min_v;
+	double maxV;
+	double minV;
 
 
 
@@ -49,91 +49,91 @@ public:
 	 * @param in_cloud Input pointcloud (Colored)
 	 * @param out_cloud Extracted Subset (Color Information Discarded)
 	 */
-	void extractColorBasedROI(BRICS_3D::ColoredPointCloud3D &in_cloud, BRICS_3D::PointCloud3D &out_cloud);
+	void extractColorBasedROI(BRICS_3D::ColoredPointCloud3D *in_cloud, BRICS_3D::PointCloud3D *out_cloud);
 
 
 	/**
 	 *
 	 * @return maximum Hue allowed
 	 */
-    double getMax_h() const;
+    double getMaxH() const;
 
 
     /**
      *
      * @return maximum Saturation allowed
      */
-    double getMax_s() const;
+    double getMaxS() const;
 
 
     /**
      *
      * @return maximum Lightness allowed
      */
-    double getMax_v() const;
+    double getMaxV() const;
 
 
     /**
      *
      * @return minimum Hue allowed
      */
-    double getMin_h() const;
+    double getMinH() const;
 
 
     /**
      *
      * @return minimum Saturation allowed
      */
-    double getMin_s() const;
+    double getMinS() const;
 
 
     /**
      *
      * @return minimum Lightness allowed
      */
-    double getMin_v() const;
+    double getMinV() const;
 
 
     /**
      *
-     * @param max_h maximum Hue allowed
+     * @param maxH maximum Hue allowed
      */
-    void setMax_h(double max_h);
+    void setMaxH(double maxH);
 
 
     /**
      *
-     * @param max_s maximum Saturation allowed
+     * @param maxS maximum Saturation allowed
      */
-    void setMax_s(double max_s);
+    void setMaxS(double maxS);
 
 
     /**
      *
-     * @param max_v maximum Lightness allowed
+     * @param maxV maximum Lightness allowed
      */
-    void setMax_v(double max_v);
+    void setMaxV(double maxV);
 
 
     /**
      *
-     * @param min_h minimum Hue allowed
+     * @param minH minimum Hue allowed
      */
-    void setMin_h(double min_h);
+    void setMinH(double minH);
 
 
     /**
      *
-     * @param min_s minimum Saturation allowed
+     * @param minS minimum Saturation allowed
      */
-    void setMin_s(double min_s);
+    void setMinS(double minS);
 
 
     /**
      *
-     * @param min_v minimum Lightness allowed
+     * @param minV minimum Lightness allowed
      */
-    void setMin_v(double min_v);
+    void setMinV(double minV);
 
 
 

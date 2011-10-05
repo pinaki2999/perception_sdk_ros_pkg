@@ -100,7 +100,7 @@ public:
 	 *	 @param s corresponding saturation
 	 *	 @param v corresponding intensity value
 	 */
-	void rgbToHsv(double r, double g, double b, double &h, double &s, double &v);
+	void rgbToHsv(double r, double g, double b, double *h, double *s, double *v);
 
 
 	/**
@@ -110,7 +110,7 @@ public:
 	 * @param g
 	 * @param b
 	 */
-	void rgb24bitToRGB(double rgb24Bit, double &r, double &g, double &b);
+	void rgb24bitToRGB(double rgb24Bit, double *r, double *g, double *b);
 
 };
 

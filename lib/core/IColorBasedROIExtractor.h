@@ -8,8 +8,9 @@
 #ifndef ICOLORREGIONEXTRACTOR_H_
 #define ICOLORREGIONEXTRACTOR_H_
 
-#include <core/ColoredPointCloud3D.h>
+#include "core/ColoredPointCloud3D.h"
 #include "ColorSpaceConvertor.h"
+
 #include <stdlib.h>
 #include <math.h>
 
@@ -25,7 +26,7 @@ public:
 	 * @param in_cloud Input pointcloud (Colored)
 	 * @param out_cloud Extracted Subset (Color Information Discarded)
 	 */
-	void extractColorBasedROI(BRICS_3D::ColoredPointCloud3D &in_cloud, BRICS_3D::PointCloud3D &out_cloud);
+	virtual void extractColorBasedROI(BRICS_3D::ColoredPointCloud3D *in_cloud, BRICS_3D::PointCloud3D *out_cloud);
 };
 
 }
