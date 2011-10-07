@@ -16,40 +16,8 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-# add library directories (-L)
-LINK_DIRECTORIES(
-    /home/pinaki/hack-arena/BRICS_3D/lib/
-)
 
-# add include directories (-I)
-INCLUDE_DIRECTORIES(
-     /home/pinaki/hack-arena/BRICS_3D/src
-     /home/pinaki/hack-arena/BRICS_3D/external
-)
+ADD_SUBDIRECTORY(./lib) #compile everything in lib to create the libraries
 
-
-
-# define sources lists for libraries (cpp files)
-SET (CORE_LIBRARY_SOURCES
-    ./lib/core/ColorSpaceConvertor
-    ./lib/core/ColorBasedROIExtractorHSV
-    ./lib/core/SimplePointCloudGeneratorCube
-)
-
-# compile libraries
-ADD_LIBRARY(perception_sdk_core ${CORE_LIBRARY_SOURCES})
-TARGET_LINK_LIBRARIES(Perception_SDK_Core ${CORE_LIBRARY_LIBS})
-
-
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
-
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
