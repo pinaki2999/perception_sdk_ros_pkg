@@ -24,6 +24,15 @@ public:
 	 * @param in_cloud Input pointcloud (Colored)
 	 * @param out_cloud Extracted Subset (Color Information Discarded)
 	 */
+	virtual void extractColorBasedROI(BRICS_3D::ColoredPointCloud3D *in_cloud, BRICS_3D::ColoredPointCloud3D *out_cloud)=0;
+
+
+
+	/**
+	 * Extracts subset of input point cloud based on color-properties
+	 * @param in_cloud Input pointcloud (Colored)
+	 * @param out_cloud Extracted Subset (Color Information Discarded)
+	 */
 	virtual void extractColorBasedROI(BRICS_3D::ColoredPointCloud3D *in_cloud, BRICS_3D::PointCloud3D *out_cloud)=0;
 };
 

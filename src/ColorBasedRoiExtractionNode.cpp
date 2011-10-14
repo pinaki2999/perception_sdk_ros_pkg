@@ -1,3 +1,11 @@
+/*
+ * ColorBasedRoiExtractionNode.cpp
+ *
+ *  Created on: Oct 13, 2011
+ *      Author: Pinaki Sunil Banerjee
+ */
+
+
 //ROS specific Headers
 #include <ros/ros.h>
 

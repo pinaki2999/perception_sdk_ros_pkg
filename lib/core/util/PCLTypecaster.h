@@ -14,7 +14,7 @@
 #include "core/ColoredPoint3D.h"
 #include "ColorSpaceConvertor.h"
 
-
+#include <stdio.h>
 namespace BRICS_3D {
 
 class PCLTypecaster {
