@@ -108,7 +108,6 @@ void PCLTypecaster::convertToBRICS3DDataType(pcl::PointCloud<pcl::PointXYZRGB>::
 	//printf("\n\n\tCHECKPOINT!!!\n");
 	for (unsigned int i =0 ; i < pclCloudPtr->size()  ; i++){
 		rgbVal= *reinterpret_cast<int*>(&pclCloudPtr->points[i].rgb);
-
 		colorSpaceConvertor.rgb24bitToRGB(rgbVal, &r, &g, &b);
 		red= *reinterpret_cast<unsigned char*>(&r);
 		green= *reinterpret_cast<unsigned char*>(&g);
