@@ -28,17 +28,6 @@ namespace BRICS_3D {
 
 
 
-/**
- * usage: rosrun colorBasedRoiExtractor <no_of_regions> <region_1_config_file> <region_2_config_file>....
- *
- * Parses HSV color limits from the configuration files for each region and publishes pointcloud
- * messages corresponding to each region
- *
- * Topic published:
- *  extracted_region_1, extracted_region_2 ......
- *  type: Pointcloud2 message
- *  frame_id: extracted_regions_frame
- */
 class ColorBasedRoiExtractor {
 private:
 

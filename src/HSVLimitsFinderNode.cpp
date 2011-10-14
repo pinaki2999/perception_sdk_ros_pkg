@@ -30,6 +30,7 @@ BRICS_3D::ColorBasedRoiExtractor roiExtractor;
 int minH, maxH, minS, maxS;
 ofstream configFileStream;
 
+//ToDo Usage details
 
 /**
  * Call back for Kinect Data
