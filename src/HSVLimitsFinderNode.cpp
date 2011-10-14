@@ -1,0 +1,122 @@
+/*
+ * HSVLimitsFinderNode.cpp
+ *
+ *  Created on: Oct 14, 2011
+ *      Author: Pinaki Sunil Banerjee
+ */
+
+//ROS specific Headers
+#include "ros/ros.h"
+#include "perception_sdk_ros_pkg/perception_sdk_ros_pkgConfig.h"
+#include "dynamic_reconfigure/server.h"
+
+//PCL specific Headers
+#include "pcl_ros/point_cloud.h"
+#include "pcl/point_types.h"
+
+//BRICS_3D specific Headers
+#include "examples/ColorBasedRoiExtractor.h"
+
+//Sytem-wide Standard Headers
+#include <fstream>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <stdlib.h>
+
+using namespace std;
+
+//Global Variables
+BRICS_3D::ColorBasedRoiExtractor roiExtractor;
+int minH, maxH, minS, maxS;
+ofstream configFileStream;
+
+
+/**
+ * Call back for Kinect Data
+ * @param cloud	received point-cloud from Kinect
+ */
+void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
+	roiExtractor.initializeLimits(minH, maxH, minS, maxS);
+	roiExtractor.kinectCloudCallback(cloud);
+}
+
+
+/**
+ *Callback for dynamic reconfigure
+ */
+void callback(perception_sdk_ros_pkg::perception_sdk_ros_pkgConfig &config, uint32_t level)
+{
+	minH = config.minimum_H;
+	maxH = config.maximum_H;
+
+	minS = config.minimum_S;
+	maxS = config.maximum_S;
+}
+
+
+/**
+ * Saves the last known configuration for HSV limits
+ * @param configFileStream	species location to write the configuration
+ * @return	true if saving successful
+ */
+int saveConfig(ofstream &configFileStream){
+	//Todo recheck if new config should be saved or not
+	configFileStream
+	<< "minH=" 				<< minH    			<<endl
+	<< "maxH=" 				<< maxH 			<<endl
+	<< "minS="      		<< minS 			<<endl
+	<< "maxS="      		<< maxS 			<<endl;
+	cout<< endl<<"New Configuration Saved......"<<endl;
+
+	return 1;
+}
+
+
+int main(int argc, char* argv[]){
+
+	//initialize the ros node
+	ros::init(argc, argv, "extractObject");
+	ros::NodeHandle nh;
+
+	//set up the dynamic configure
+	dynamic_reconfigure::Server<perception_sdk_ros_pkg::perception_sdk_ros_pkgConfig> srv;
+	dynamic_reconfigure::Server<perception_sdk_ros_pkg::perception_sdk_ros_pkgConfig>::CallbackType f;
+	f = boost::bind(&callback, _1, _2);
+	srv.setCallback(f);
+
+	//Define the publishers for each extracted region
+	ros::Publisher extractedRoiPublisher;
+
+
+	//define the HSV limit variables;
+	minH=0; maxH=0; minS=0; maxS=0;
+
+	//initalize the roiExtractor
+	roiExtractor.initializeLimits(minH, maxH, minS, maxS);
+
+	//initialize the publisher for extracted region
+	extractedRoiPublisher = nh.advertise< pcl::PointCloud<pcl::PointXYZRGB> >  ("extracted_region_1", 1);
+	roiExtractor.setExtractedRegionPublisher(&extractedRoiPublisher);
+
+	//subscribe to kinect point cloud messages
+	ros::Subscriber  kinectCloudRaw_green = nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
+
+	ROS_INFO("Now extracting ROIs ;)");
+
+	//start ros-message callbacks
+	ros::spin();
+
+	//Store the configuration
+	string userInput;
+	cout << "Do you want to save the last configuration of HSV Limits ??  "<< endl;
+	cin  >> userInput;
+	if(!userInput.compare("y") || !userInput.compare("Y") || !userInput.compare("yes")){
+		cout << "Please enter the target file (including path to file) "<< endl;
+		cin  >> userInput;
+		ofstream configFileStream;
+		configFileStream.open(userInput.c_str(), ios::out);
+		if(configFileStream.is_open()) saveConfig(configFileStream);
+	}
+
+	return 0;
+}
