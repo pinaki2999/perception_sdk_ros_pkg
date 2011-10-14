@@ -11,6 +11,7 @@
 #include "pcl/point_types.h"
 #include "pcl/io/pcd_io.h"
 #include "core/ColoredPointCloud3D.h"
+#include "core/ColoredPoint3D.h"
 #include "ColorSpaceConvertor.h"
 
 
@@ -27,7 +28,7 @@ public:
 	 * @param pclCloudPtr		point cloud data in PCL format
 	 * @param pointCloud3DPtr	point cloud datda in BRICS_3D format
 	 */
-	void convertToPCLDataType(pcl::PointCloud<pcl::PointXYZ>::Ptr pclCloudPtr,
+	 void convertToPCLDataType(pcl::PointCloud<pcl::PointXYZ>::Ptr pclCloudPtr,
 			BRICS_3D::PointCloud3D* pointCloud3DPtr );
 
 
@@ -37,9 +38,19 @@ public:
 	 * @param pclCloudPtr		point cloud data in PCL format
 	 * @param pointCloud3DPtr	point cloud datda in BRICS_3D format
 	 */
-	void convertToBRICS3DDataTyoe(pcl::PointCloud<pcl::PointXYZ>::Ptr pclCloudPtr,
+	void convertToBRICS3DDataType(pcl::PointCloud<pcl::PointXYZ>::Ptr pclCloudPtr,
 			BRICS_3D::PointCloud3D* pointCloud3DPtr );
 
+
+
+
+	/**
+	 * Converts from XYZRGB-cloud format of PCL to XYZ-cloud format of BRICS_3D
+	 * @param pclCloudPtr		point cloud data in PCL format
+	 * @param pointCloud3DPtr	point cloud datda in BRICS_3D format
+	 */
+	void convertToBRICS3DDataType(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloudPtr,
+			BRICS_3D::PointCloud3D* pointCloud3DPtr );
 
 
 
@@ -53,11 +64,20 @@ public:
 
 
 	/**
+	 * Converts from XYZRGB-cloud format of BRICS_3D to XYZ format of PCL
+	 * @param pclCloudPtr		point cloud data in PCL format
+	 * @param pointCloud3DPtr	point cloud data in BRICS_3D format
+	 */
+	void convertToPCLDataType(pcl::PointCloud<pcl::PointXYZ>::Ptr pclCloudPtr,
+			BRICS_3D::ColoredPointCloud3D* pointCloud3DPtr );
+
+
+	/**
 	 * Converts from XYZRGB-cloud format of PCL to XYZRGB-cloud format of BRICS_3D
 	 * @param pclCloudPtr		point cloud data in PCL format
 	 * @param pointCloud3DPtr	point cloud datda in BRICS_3D format
 	 */
-	void convertToBRICS3DDataTyoe(pcl::PointCloud<pcl::PointXYZ>::Ptr pclCloudPtr,
+	void convertToBRICS3DDataType(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloudPtr,
 			BRICS_3D::ColoredPointCloud3D* pointCloud3DPtr );
 
 };

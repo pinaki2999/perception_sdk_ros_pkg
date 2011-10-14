@@ -6,7 +6,7 @@
  */
 
 #include "ColorBasedROIExtractorHSV.h"
-
+#include <stdio.h>
 
 namespace BRICS_3D {
 
@@ -93,25 +93,31 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 	}
 
 	int cloudSize =	in_cloud->getSize();
-	double tempH, tempS, tempV, tempR, tempG, tempB;
-	char tempChar;
+	double tempH, tempS, tempV;
+	int tempR, tempG, tempB;
+	uint8_t tempChar;
 	bool passed;
 	BRICS_3D::ColorSpaceConvertor colorConvertor;
 	BRICS_3D::Point3D tempPoint3D;
 	out_cloud->getPointCloud()->clear();
+
+	printf("H-S Limits: [%f %f %f %f]\n", minH, maxH, minS, maxS);
 
 	for (unsigned int i = 0; i < cloudSize; i++) {
 
 		passed = false;
 		//Getting the HSV values for the RGB points
 		tempChar = in_cloud->getPointCloud()->data()[i].red;
-		tempR = atof( &tempChar );
+				tempR = tempChar << 0;
+				tempR = abs(tempR);
 
 		tempChar = in_cloud->getPointCloud()->data()[i].green;
-		tempG = atof( &tempChar );
+		tempG = tempChar << 0;
+		tempG = abs(tempG);
 
 		tempChar = in_cloud->getPointCloud()->data()[i].blue;
-		tempB = atof( &tempChar );
+		tempB = tempChar << 0;
+		tempB = abs(tempB);
 
 		colorConvertor.rgbToHsv(tempR, tempG, tempB, &tempH, &tempS, &tempV);
 
@@ -119,12 +125,18 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 		if (tempH < maxH && tempH > minH) {
 			if (tempS < minS && tempS > maxS) {
 				passed=true;
+
 			}
 		}
 
+		printf("H-S Limits: [%f %f %f %f]\n", minH, maxH, minS, maxS);
+		printf("Actual H-S Values: [%d %d %d %f %f]\n", tempR, tempG, tempB, tempH, tempS);
+
+//		printf("Actual H-S Values: [%f %f]\n", tempH, tempS);
 		//Add to the out_cloud if the values are passed
 
 		if(passed){
+			printf("Added a point\n");
 			tempPoint3D.setX(in_cloud->getPointCloud()->data()[i].getX());
 			tempPoint3D.setY(in_cloud->getPointCloud()->data()[i].getY());
 			tempPoint3D.setZ(in_cloud->getPointCloud()->data()[i].getZ());

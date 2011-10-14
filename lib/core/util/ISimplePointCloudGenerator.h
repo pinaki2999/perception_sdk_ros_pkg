@@ -19,7 +19,7 @@ public:
 	 * Generates a 3D model of a simple shape
 	 * @param generatedPointCloud Pointcloud representing the requested 3D model
 	 */
-	virtual void generatePointCloud(BRICS_3D::PointCloud3D *generatedPointCloud);
+	virtual void generatePointCloud(BRICS_3D::PointCloud3D *generatedPointCloud)=0;
 
 };
 

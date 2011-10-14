@@ -6,6 +6,7 @@
  */
 
 #include <math.h>
+#include <stdint.h>
 
 #ifndef COLORSPACECONVERTOR_H_
 #define COLORSPACECONVERTOR_H_
@@ -100,7 +101,7 @@ public:
 	 *	 @param s corresponding saturation
 	 *	 @param v corresponding intensity value
 	 */
-	void rgbToHsv(double r, double g, double b, double *h, double *s, double *v);
+	void rgbToHsv(int red, int green, int blue, double *hue, double *sat, double *val);
 
 
 	/**
@@ -110,7 +111,7 @@ public:
 	 * @param g
 	 * @param b
 	 */
-	void rgb24bitToRGB(float rgb24Bit,int *r, int *g, int *b);
+	void rgb24bitToRGB(int rgb_val,  uint8_t *r, uint8_t *g, uint8_t *b);
 
 
 
@@ -121,7 +122,8 @@ public:
 	 * @param g
 	 * @param b
 	 */
-	void rgbToRGB24Bit(float *rgb24Bit, int r, int g, int b);
+	void rgbToRGB24Bit(float *rgb24Bit, unsigned char r, unsigned char g,
+			unsigned char b);
 
 };
 
