@@ -9,6 +9,7 @@ SET (CORE_LIBRARY_SOURCES
     ./core/util/SimplePointCloudGeneratorCube
     ./core/util/PCLTypecaster
     ./core/depthPerception/kinectDataGrabber
+    ./core/segmentation/EuclideanClusterExtraction
 )
 
 # compile libraries
