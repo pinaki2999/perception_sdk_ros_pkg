@@ -76,7 +76,7 @@ int saveConfig(ofstream &configFileStream){
 int main(int argc, char* argv[]){
 
 	//initialize the ros node
-	ros::init(argc, argv, "extractObject");
+	ros::init(argc, argv, "hsvLimitsFinder");
 	ros::NodeHandle nh;
 
 	//set up the dynamic configure
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]){
 	roiExtractor.setExtractedRegionPublisher(&extractedRoiPublisher);
 
 	//subscribe to kinect point cloud messages
-	ros::Subscriber  kinectCloudRaw_green = nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
+	ros::Subscriber  kinectCloudSubscriber = nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
 
 	ROS_INFO("Now extracting ROIs ;)");
 

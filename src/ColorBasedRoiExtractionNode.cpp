@@ -31,7 +31,7 @@
  * Topic published:
  *  extracted_region_1, extracted_region_2 ......
  *  type: Pointcloud2 message
- *  frame_id: extracted_regions_frame
+ *  frame_id: openni_rg_optical_frame
  */
 
 using namespace std;
@@ -48,7 +48,7 @@ void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 
 int main(int argc, char* argv[]){
 
-	ros::init(argc, argv, "extractObject");
+	ros::init(argc, argv, "colorBasedRoiExtractor");
 	ros::NodeHandle nh;
 
 	if(argc < 2){
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
 
 
 	//subscribe to kinect point cloud messages
-    ros::Subscriber  kinectCloudRaw_green = nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
+    ros::Subscriber  kinectCloudSubscriber = nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
 
     ROS_INFO("Now extracting ROIs ;)");
 
