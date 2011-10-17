@@ -57,10 +57,20 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     //Publish the extracted clusters
 	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
     for (unsigned int i = 0; i < extracted_clusters.size(); i++){
-    	pclTypecaster.convertToPCLDataType(tempCloud, extracted_clusters[i]);
+    	Eigen::Vector3d centroid3d = centroid3DEstimator.estmateCentroid(extracted_clusters[i]);
 
+    	pclTypecaster.convertToPCLDataType(tempCloud, extracted_clusters[i]);
     	tempCloud->header.frame_id = "openni_rgb_optical_frame";
     	extractedClusterPublisher[i].publish(*tempCloud);
+
+         static tf::TransformBroadcaster br;
+         tf::Transform transform;
+         transform.setOrigin( tf::Vector3(centroid3d[0], centroid3d[1], centroid3d[2]) );
+         transform.setRotation( tf::Quaternion(0, 0, 0) );
+//         stringstream s;
+//         s<< ;
+         br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "openni_rgb_optical_frame",
+        		 extractedClusterPublisher[i].getTopic()));
     }
 
     tempCloud.reset();

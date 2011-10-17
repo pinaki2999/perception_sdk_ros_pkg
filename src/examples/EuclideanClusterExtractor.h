@@ -12,12 +12,14 @@
 #include "sensor_msgs/point_cloud_conversion.h"
 #include "ros/publisher.h"
 #include "pcl_ros/point_cloud.h"
+#include <tf/transform_broadcaster.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
 
 #include "segmentation/EuclideanClusterExtraction.h"
+#include "features/Centroid3DEstimation.h"
 #include "util/PCLTypecaster.h"
 
 //Todo add the comments
@@ -30,7 +32,7 @@ private:
 
 	BRICS_3D::PCLTypecaster pclTypecaster;
 	BRICS_3D::EucledeanClusterExtraction euclideanClusterExtractor;
-
+	BRICS_3D::Centroid3DEstimation centroid3DEstimator;
 	int maxNoOfObjects;
 
 public:
