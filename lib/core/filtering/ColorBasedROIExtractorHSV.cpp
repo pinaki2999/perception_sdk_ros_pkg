@@ -101,8 +101,6 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 	BRICS_3D::Point3D tempPoint3D;
 	out_cloud->getPointCloud()->clear();
 
-//	printf("Used H-S Limits for extraction: H:[%f %f] S:[%f %f]\n", minH, maxH, minS, maxS);
-
 	for (unsigned int i = 0; i < cloudSize; i++) {
 
 		passed = false;
@@ -129,9 +127,6 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 			}
 		}
 
-//		printf("H-S Limits: [%f %f %f %f]\n", minH, maxH, minS, maxS);
-//		printf("Actual H-S Values: [%d %d %d %f %f]\n", tempR, tempG, tempB, tempH, tempS);
-
 		if(passed){
 			out_cloud->addPoint(new BRICS_3D::ColoredPoint3D(
 							new BRICS_3D::Point3D(	in_cloud->getPointCloud()->data()[i].getX(),
@@ -143,7 +138,6 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 		}
 
 	}
-//	printf("Output cloud size:%d\n", out_cloud->getSize());
 }
 
 
@@ -165,8 +159,6 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 	BRICS_3D::Point3D tempPoint3D;
 	out_cloud->getPointCloud()->clear();
 
-//	printf("Used H-S Limits for extraction: H:[%f %f] S:[%f %f]\n", minH, maxH, minS, maxS);
-
 	for (unsigned int i = 0; i < cloudSize; i++) {
 
 		passed = false;
@@ -193,9 +185,6 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 			}
 		}
 
-//		printf("H-S Limits: [%f %f %f %f]\n", minH, maxH, minS, maxS);
-//		printf("Actual H-S Values: [%d %d %d %f %f]\n", tempR, tempG, tempB, tempH, tempS);
-
 		if(passed){
 			out_cloud->addPoint(new BRICS_3D::Point3D(	in_cloud->getPointCloud()->data()[i].getX(),
 													in_cloud->getPointCloud()->data()[i].getY(),
@@ -203,7 +192,6 @@ void ColorBasedROIExtractorHSV::extractColorBasedROI(BRICS_3D::ColoredPointCloud
 		}
 
 	}
-//	printf("Output cloud size:%d\n", out_cloud->getSize());
 }
 
 

@@ -19,8 +19,20 @@ public:
 	Centroid3DEstimation();
 	virtual ~Centroid3DEstimation();
 
+
+	/**
+	 * Estimates 3D centroid of the input point cloud
+	 * @param inCloud The input cloud of which the centroid will be calculated
+	 * @return the calculated 3D centroid
+	 */
 	Eigen::Vector3d estmateCentroid(BRICS_3D::PointCloud3D *inCloud);
 
+
+	/**
+	 * Estimates 3D centroid of the input point cloud
+	 * @param inCloud The input cloud of which the centroid will be calculated
+	 * @return the calculated 3D centroid
+	 */
 	Eigen::Vector3d estmateCentroid(BRICS_3D::ColoredPointCloud3D *inCloud);
 
 };

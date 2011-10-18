@@ -153,12 +153,6 @@ void SimplePointCloudGeneratorCube::generatePointCloud(BRICS_3D::PointCloud3D *g
 			break;
 		}
 	}
-
-/*	Eigen::Matrix4f  tempHomogenousMatrix;
-	calculateHomogeneousMatrix(90,0,0,0,0,0,tempHomogenousMatrix,true);
-    applyHomogeneousTransformation(&cubeModel3D, &cubeModel3D, tempHomogenousMatrix);
-    applyHomogeneousTransformation(&cubeModel3D, &cubeModel3D, tempHomogenousMatrix);
-*/
 }
 
 

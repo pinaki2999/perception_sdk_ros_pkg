@@ -23,6 +23,21 @@
 #include <boost/algorithm/string.hpp>
 #include <stdlib.h>
 
+
+/**
+ * usage: rosrun perception_sdk_ros_pkg hsvLimitsFinder
+ *
+ * start the dynamic reconfigure using: rosrun dynamic_configure reconfigure_gui
+ * to play with the HSV limits.
+ * use Ctrl+c on the ros-node to stop the extraction once the appropriate HSV limits are set
+ * save the last found configuration if you want to
+ *
+ * Topic published:
+ *  extracted_region_1
+ *  type: Pointcloud2 message
+ *  frame_id: /openni_rgb_optical_frame
+ */
+
 using namespace std;
 
 //Global Variables

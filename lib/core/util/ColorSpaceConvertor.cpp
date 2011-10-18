@@ -58,9 +58,6 @@ void ColorSpaceConvertor::rgbToHsv(int red, int green, int blue, double *hue, do
 	*hue = h;
 	*sat = s;
 	*val=v;
-
-//	printf("RGB Values: [%d %d %d %f %f %f %f]\n", red, green, blue, h, s, min, max);
-
 }
 
 void ColorSpaceConvertor::rgb24bitToRGB(int rgb_val,  uint8_t *r, uint8_t *g, uint8_t *b){

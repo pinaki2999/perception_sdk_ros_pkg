@@ -26,25 +26,64 @@
 
 namespace BRICS_3D {
 
-
+//ToDo update the extractor to also use some default V values to be more flexible.
 
 class ColorBasedRoiExtractor {
 private:
 
+	/**
+	 * ROS publisher to publish the extracted Regions of Interests
+	 */
 	ros::Publisher *extractedRegionPublisher;
+
+	/**
+	 * object for extracting ROIs based on HSV-color space limits
+	 */
 	BRICS_3D::ColorBasedROIExtractorHSV hsvBasedRoiExtractor;
+
+	/**
+	 * Utility object for color-space transforms
+	 */
 	BRICS_3D::ColorSpaceConvertor colorSpaceConvertor;
+
+	/**
+	 * Utility object for type-casting data between BRICS_3D and PCL
+	 */
 	BRICS_3D::PCLTypecaster pclTypeCaster;
 
 public:
 	ColorBasedRoiExtractor();
 	virtual ~ColorBasedRoiExtractor();
 
+	/**
+	 * Callback function for Kinect data. Finds the ROI from the input data
+	 * @param cloud input cloud from Kinect
+	 */
 	void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud);
 
+
+	/**
+	 * Initializes the HSV color-space based ROI extractor with Hue ans Saturation limits
+	 * @param minLimitH	minimum Hue value
+	 * @param maxLimitH maximum Hue value
+	 * @param minLimitS minimum saturation value
+	 * @param maxLimitS maximum saturation value
+	 *
+	 */
 	void initializeLimits(float minLimitH, float maxLimitH, float minLimitS, float maxLimitS);
 
+
+	/**
+	 *
+	 * @return the current publisher which will be used to publish the extracted regions of interests
+	 */
 	ros::Publisher* getExtractedRegionPublisher() const;
+
+
+	/**
+	 * sets the current publisher which will be used to publish the extracted regions of interests
+	 * @param extractedRegionPublisher the current publisher which will be used to publish the extracted ROIs
+	 */
     void setExtractedRegionPublisher(ros::Publisher *extractedRegionPublisher);
 
 

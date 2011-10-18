@@ -8,7 +8,6 @@ SET (CORE_LIBRARY_SOURCES
     ./core/filtering/ColorBasedROIExtractorHSV
     ./core/util/SimplePointCloudGeneratorCube
     ./core/util/PCLTypecaster
-    ./core/depthPerception/kinectDataGrabber
     ./core/segmentation/EuclideanClusterExtraction
     ./core/features/Centroid3DEstimation
 )

@@ -34,7 +34,6 @@ EuclideanClusterExtractor::~EuclideanClusterExtractor() {}
 
 
 void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
-	//printf("Nothing is implemented yet!!!! \n");
 
 	//ToDo assert if every thing is initialized or not
 
@@ -46,13 +45,10 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
 
     //Transform sensor_msgs::PointCloud2 msg to pcl::PointCloud
     pcl::fromROSMsg (cloud, *cloud_xyz_rgb_ptr);
-    //printf("[ECExtraction]Input cloud Size: %d \n", cloud_xyz_rgb_ptr->points.size());
     // cast PCL to BRICS_3D type
     pclTypecaster.convertToBRICS3DDataType(cloud_xyz_rgb_ptr, in_cloud);
-    //printf("[ECExtraction]Converted cloud Size: %d \n", in_cloud->getSize());
     //extract the clusters
     euclideanClusterExtractor.extractClusters(in_cloud, &extracted_clusters);
-    //printf("Number of clusters found = %d \n", extracted_clusters.size());
 
     //Publish the extracted clusters
 	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -60,16 +56,15 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     	Eigen::Vector3d centroid3d = centroid3DEstimator.estmateCentroid(extracted_clusters[i]);
 
     	pclTypecaster.convertToPCLDataType(tempCloud, extracted_clusters[i]);
-    	tempCloud->header.frame_id = "openni_rgb_optical_frame";
+    	tempCloud->header.frame_id = "/openni_rgb_optical_frame";
     	extractedClusterPublisher[i].publish(*tempCloud);
 
          static tf::TransformBroadcaster br;
          tf::Transform transform;
          transform.setOrigin( tf::Vector3(centroid3d[0], centroid3d[1], centroid3d[2]) );
+         //Todo stop using Quaternion
          transform.setRotation( tf::Quaternion(0, 0, 0) );
-//         stringstream s;
-//         s<< ;
-         br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "openni_rgb_optical_frame",
+         br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/openni_rgb_optical_frame",
         		 extractedClusterPublisher[i].getTopic()));
     }
 

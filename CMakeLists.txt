@@ -51,6 +51,6 @@ rosbuild_add_executable(gopalHSVLimitsFinder src/HSVLimitsFinderNode.cpp
 target_link_libraries(gopalHSVLimitsFinder perception_sdk_core)
 
 #executable for object cluster extraction
-rosbuild_add_executable(gopalObjectClusterExtraction src/ObjectClusterExtractionNode.cpp 
+rosbuild_add_executable(gopalObjectClusterExtractor src/ObjectClusterExtractionNode.cpp 
 						src/examples/EuclideanClusterExtractor)
-target_link_libraries(gopalObjectClusterExtraction perception_sdk_core)
+target_link_libraries(gopalObjectClusterExtractor perception_sdk_core)

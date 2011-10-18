@@ -22,9 +22,13 @@
 #include <boost/algorithm/string.hpp>
 #include <stdlib.h>
 #include <sstream>
+
 /**
- * usage: rosrun objectClusterExtractor <no_of_regions> <max_no_of_objects_in_each_region>
- * find object clusters from the hsv-based extracted regions of interests
+ * usage: rosrun perception_sdk_pkg objectClusterExtractor <no_of_regions> <max_no_of_objects_in_each_region>
+ *
+ * Finds object clusters from the hsv-based extracted regions of interests
+ *
+ * Arguments:
  * <no_of_regions> 	: corresponds to the count of difrent regions of intersets, ex: green, red
  * 					: default value 1
  * <max_no_objects> : max number of object clusters possible in each region
