@@ -76,15 +76,15 @@
 
 	2-c. Object Cluster Extractor and 3d pose estimator
 	=================================================
-	The node finds the object clusters in the extracted ROIs by the node colorBasedRoiExtractor explained above. The
-	objectClusterExtractor node finds the clusters and publishes:
+	The node finds the object clusters in the extracted ROIs by the node colorBasedRoiExtractor explained above. 
+	The objectClusterExtractor node finds the clusters and publishes:
 
 	-- individual object cluster with topc name: "region_n_obj_cluster_m"
 	   n = corresponds region number in the topic "extracted_region_n" from  colorBasedRoiExtractor	 
 	   m = cluster number in the order of detection by the algorithm
 
-	-- 3d pose of the clusters: a tf frame for each object-cluster with respect to the "openni_rgb_optical_frame" of kinect driver with the 
-	   topic name : "region_n_obj_cluster_m"	
+	-- 3d pose of the clusters: a tf frame for each object-cluster with respect to the "openni_rgb_optical_frame"
+	   of kinect driver with the topic name : "region_n_obj_cluster_m"	
 
 	Usage:
 	
@@ -117,10 +117,10 @@
 
 	2-d. 3D pose Estimation
 	=====================
-	A launch file is also provided that can be used to launch/start all the relevant nodes to start estimating the 3D pose
-	as explained in section 2-c. To start the launch file:
+	A launch file is also provided that can be used to launch/start all the relevant nodes to start estimating 
+	the 3D pose as explained in section 2-c. To start the launch file:
 		
 		$ roslaunch perception_sdk_ros_pkg PoseEstimation3D.launch
 
-	The launch file can be modified to change the arguments passed to each node. The values of the arguments have the same
-	meaning as explained in sections 2-b and 2-c.
+	The launch file can be modified to change the arguments passed to each node. The values of the arguments have 
+	the same meaning as explained in sections 2-b and 2-c.
