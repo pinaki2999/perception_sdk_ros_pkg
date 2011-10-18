@@ -123,17 +123,17 @@ void PCLTypecaster::convertToBRICS3DDataType(pcl::PointCloud<pcl::PointXYZRGB>::
 		red= *reinterpret_cast<unsigned char*>(&r);
 		green= *reinterpret_cast<unsigned char*>(&g);
 		blue= *reinterpret_cast<unsigned char*>(&b);
-//		Point3D* tmpPoint =  new Point3D(pclCloudPtr->points[i].x, pclCloudPtr->points[i].y, pclCloudPtr->points[i].z);
-//		ColoredPoint3D* tmpColoredPoint = new ColoredPoint3D(tmpPoint, red, green, blue);
-// 		pointCloud3DPtr->addPoint(tmpColoredPoint);
-// 		delete tmpPoint;
-// 		delete tmpColoredPoint;
-		pointCloud3DPtr->getPointCloud()->data()[i].setX(pclCloudPtr->points[i].x);
-		pointCloud3DPtr->getPointCloud()->data()[i].setY(pclCloudPtr->points[i].y);
-		pointCloud3DPtr->getPointCloud()->data()[i].setZ(pclCloudPtr->points[i].z);
-		pointCloud3DPtr->getPointCloud()->data()[i].setR(red);
-		pointCloud3DPtr->getPointCloud()->data()[i].setG(blue);
-		pointCloud3DPtr->getPointCloud()->data()[i].setB(green);
+		Point3D* tmpPoint =  new Point3D(pclCloudPtr->points[i].x, pclCloudPtr->points[i].y, pclCloudPtr->points[i].z);
+		ColoredPoint3D* tmpColoredPoint = new ColoredPoint3D(tmpPoint, red, green, blue);
+ 		pointCloud3DPtr->addPoint(tmpColoredPoint);
+ 		delete tmpPoint;
+ 		delete tmpColoredPoint;
+//		pointCloud3DPtr->getPointCloud()->data()[i].setX(pclCloudPtr->points[i].x);
+//		pointCloud3DPtr->getPointCloud()->data()[i].setY(pclCloudPtr->points[i].y);
+//		pointCloud3DPtr->getPointCloud()->data()[i].setZ(pclCloudPtr->points[i].z);
+//		pointCloud3DPtr->getPointCloud()->data()[i].setR(red);
+//		pointCloud3DPtr->getPointCloud()->data()[i].setG(blue);
+//		pointCloud3DPtr->getPointCloud()->data()[i].setB(green);
 	}
 
 }

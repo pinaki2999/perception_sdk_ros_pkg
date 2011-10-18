@@ -41,16 +41,16 @@ INCLUDE_DIRECTORIES(
 ADD_SUBDIRECTORY(./lib) #compile everything in lib to create the libraries
 
 #executable for color based region of interest extraction
-rosbuild_add_executable(gopalColorBasedRoiExtractor src/ColorBasedRoiExtractionNode.cpp 
+rosbuild_add_executable(colorBasedRoiExtractor src/ColorBasedRoiExtractionNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(gopalColorBasedRoiExtractor perception_sdk_core)
+target_link_libraries(colorBasedRoiExtractor perception_sdk_core)
 
 #executable for hsv configuration finder
-rosbuild_add_executable(gopalHSVLimitsFinder src/HSVLimitsFinderNode.cpp 
+rosbuild_add_executable(hsvLimitsFinder src/HSVLimitsFinderNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(gopalHSVLimitsFinder perception_sdk_core)
+target_link_libraries(hsvLimitsFinder perception_sdk_core)
 
 #executable for object cluster extraction
-rosbuild_add_executable(gopalObjectClusterExtractor src/ObjectClusterExtractionNode.cpp 
+rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
 						src/examples/EuclideanClusterExtractor)
-target_link_libraries(gopalObjectClusterExtractor perception_sdk_core)
+target_link_libraries(objectClusterExtractor perception_sdk_core)
