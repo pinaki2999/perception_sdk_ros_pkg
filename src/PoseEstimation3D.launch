@@ -25,13 +25,13 @@
 	
 	<!-- start the roi extraction process -->
 	<!-- arguments: <no_of_Region_Of_Interests> <full_paths_to_each_hsv_configuration_files> -->
-	<node name="colorBasedRoiExtractor" pkg="perception_sdk_ros_pkg" type="gopalColorBasedRoiExtractor" 
+	<node name="colorBasedRoiExtractor" pkg="perception_sdk_ros_pkg" type="colorBasedRoiExtractor" 
 					args="1 $(find perception_sdk_ros_pkg)/redRoiConfig.cfg" />
 
 
 	<!-- start the object cluster extraction and 3D pose estimation process -->
 	<!-- arguments: <no_of_Region_Of_Interests> <max_no_of_objects_possible> -->
-	<node name="objectClusterExtractor" pkg="perception_sdk_ros_pkg" type="gopalObjectClusterExtractor" 
+	<node name="objectClusterExtractor" pkg="perception_sdk_ros_pkg" type="objectClusterExtractor" 
 					args="1 2" />
 
 </launch>
