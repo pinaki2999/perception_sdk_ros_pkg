@@ -10,7 +10,7 @@
 
 #include "core/PointCloud3D.h"
 #include "core/ColoredPointCloud3D.h"
-
+#include "algorithm/nearestNeighbor/NearestNeighborANN.h"
 
 #include <vector>
 #include<stdio.h>
@@ -30,13 +30,13 @@ private:
 	/**
 	 * Minimum number of points to consider it as a cluster
 	 */
-	int minClusterSize;
+	unsigned int minClusterSize;
 
 
 	/**
 	 * Maximum number of points to be in the cluster
 	 */
-	int maxClusterSize;
+	unsigned int maxClusterSize;
 
 
 public:

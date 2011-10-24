@@ -50,4 +50,4 @@ target_link_libraries(hsvLimitsFinder  brics_3dpm_util brics_3dpm_algorithm bric
 rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
 						src/examples/EuclideanClusterExtractor src/examples/EuclideanClustering3D)
 target_link_libraries(objectClusterExtractor   
-										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
+										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
