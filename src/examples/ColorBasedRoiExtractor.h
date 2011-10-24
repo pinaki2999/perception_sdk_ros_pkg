@@ -19,8 +19,8 @@
 #include "pcl/PointIndices.h"
 #include "pcl/filters/extract_indices.h"
 
-#include "filtering/ColorBasedROIExtractorHSV.h"
-#include "util/ColorSpaceConvertor.h"
+#include "algorithm/filtering/ColorBasedROIExtractorHSV.h"
+#include "core/ColorSpaceConvertor.h"
 #include "util/PCLTypecaster.h"
 #include "core/ColoredPointCloud3D.h"
 

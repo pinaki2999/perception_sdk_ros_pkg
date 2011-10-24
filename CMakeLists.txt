@@ -31,26 +31,22 @@ LINK_DIRECTORIES(
 INCLUDE_DIRECTORIES(
      /home/pinaki/hack-arena/BRICS_3D/src
      /home/pinaki/hack-arena/BRICS_3D/external
-     ${PROJECT_SOURCE_DIR}/lib/core
-     /home/pinaki/hack-arena/Others/libfreenect/include
-     /home/pinaki/hack-arena/Others/libfreenect/wrappers/c_sync
-     
 )
 
 
-ADD_SUBDIRECTORY(./lib) #compile everything in lib to create the libraries
+#ADD_SUBDIRECTORY(./lib) #compile everything in lib to create the libraries
 
 #executable for color based region of interest extraction
 rosbuild_add_executable(colorBasedRoiExtractor src/ColorBasedRoiExtractionNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(colorBasedRoiExtractor perception_sdk_core)
+target_link_libraries(colorBasedRoiExtractor brics_3dpm_core brics_3dpm_algorithm brics_3dpm_util)
 
 #executable for hsv configuration finder
 rosbuild_add_executable(hsvLimitsFinder src/HSVLimitsFinderNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(hsvLimitsFinder perception_sdk_core)
+target_link_libraries(hsvLimitsFinder  brics_3dpm_core brics_3dpm_algorithm brics_3dpm_util)
 
 #executable for object cluster extraction
-rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
-						src/examples/EuclideanClusterExtractor)
-target_link_libraries(objectClusterExtractor perception_sdk_core)
+#rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
+#						src/examples/EuclideanClusterExtractor)
+#target_link_libraries(objectClusterExtractor  brics_3dpm_core brics_3dpm_algorithm brics_3dpm_util)
