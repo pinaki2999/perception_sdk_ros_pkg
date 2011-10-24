@@ -18,8 +18,9 @@
 #include <stdio.h>
 #include <vector>
 
-#include "segmentation/EuclideanClusterExtraction.h"
-#include "features/Centroid3DEstimation.h"
+//#include "algorithm/segmentation/EuclideanClustering.h"
+#include "EuclideanClustering3D.h"
+#include "algorithm/featureExtraction/Centroid3D.h"
 #include "util/PCLTypecaster.h"
 
 //Todo add the comments
@@ -41,12 +42,12 @@ private:
 	/**
 	 * Object for extracting euclidean clusters
 	 */
-	BRICS_3D::EucledeanClusterExtraction euclideanClusterExtractor;
+	BRICS_3D::EuclideanClustering3D euclideanClusterExtractor;
 
 	/**
 	 * Object for estimating 3D centroids of the estimated object clusters
 	 */
-	BRICS_3D::Centroid3DEstimation centroid3DEstimator;
+	BRICS_3D::Centroid3D centroid3DEstimator;
 
 	/**
 	 * Maximum number of object clusters which will be published. The first three object clusters

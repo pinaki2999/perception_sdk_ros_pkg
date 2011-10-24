@@ -39,14 +39,15 @@ INCLUDE_DIRECTORIES(
 #executable for color based region of interest extraction
 rosbuild_add_executable(colorBasedRoiExtractor src/ColorBasedRoiExtractionNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(colorBasedRoiExtractor brics_3dpm_core brics_3dpm_algorithm brics_3dpm_util)
+target_link_libraries(colorBasedRoiExtractor brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
 
 #executable for hsv configuration finder
 rosbuild_add_executable(hsvLimitsFinder src/HSVLimitsFinderNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(hsvLimitsFinder  brics_3dpm_core brics_3dpm_algorithm brics_3dpm_util)
+target_link_libraries(hsvLimitsFinder  brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
 
 #executable for object cluster extraction
-#rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
-#						src/examples/EuclideanClusterExtractor)
-#target_link_libraries(objectClusterExtractor  brics_3dpm_core brics_3dpm_algorithm brics_3dpm_util)
+rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
+						src/examples/EuclideanClusterExtractor src/examples/EuclideanClustering3D)
+target_link_libraries(objectClusterExtractor   
+										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
