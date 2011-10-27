@@ -19,7 +19,7 @@
 #include <vector>
 
 //#include "algorithm/segmentation/EuclideanClustering.h"
-#include "EuclideanClustering3D.h"
+#include "EuclideanClustering.h"
 #include "algorithm/featureExtraction/Centroid3D.h"
 #include "util/PCLTypecaster.h"
 
@@ -42,7 +42,7 @@ private:
 	/**
 	 * Object for extracting euclidean clusters
 	 */
-	BRICS_3D::EuclideanClustering3D euclideanClusterExtractor;
+	BRICS_3D::SDK::EuclideanClustering euclideanClusterExtractor;
 
 	/**
 	 * Object for estimating 3D centroids of the estimated object clusters

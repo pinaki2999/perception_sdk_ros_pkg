@@ -7,7 +7,7 @@
 
 #include "EuclideanClusterExtractor.h"
 
-namespace BRICS_3D {
+namespace BRICS_3D{
 
 EuclideanClusterExtractor::EuclideanClusterExtractor() {}
 
@@ -49,7 +49,7 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     pclTypecaster.convertToBRICS3DDataType(cloud_xyz_rgb_ptr, in_cloud);
     //extract the clusters
     euclideanClusterExtractor.extractClusters(in_cloud, &extracted_clusters);
-
+    ROS_INFO("No of clusters found: %d", extracted_clusters.size());
     //Publish the extracted clusters
 	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
     for (unsigned int i = 0; i < extracted_clusters.size(); i++){
@@ -58,6 +58,8 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     	pclTypecaster.convertToPCLDataType(tempCloud, extracted_clusters[i]);
     	tempCloud->header.frame_id = "/openni_rgb_optical_frame";
     	extractedClusterPublisher[i].publish(*tempCloud);
+
+    	ROS_INFO("Cluster Position 3D: [%f, %f, %f]", centroid3d[0], centroid3d[1], centroid3d[2]);
 
          static tf::TransformBroadcaster br;
          tf::Transform transform;
