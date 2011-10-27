@@ -18,12 +18,11 @@
 #include <stdio.h>
 #include <vector>
 
-#include "segmentation/EuclideanClusterExtraction.h"
-#include "features/Centroid3DEstimation.h"
-#include "util/PCLTypecaster.h"
+#include "brics_3d_sdk/segmentation/EuclideanClusterExtraction.h"
+#include "brics_3d_sdk/features/Centroid3DEstimation.h"
+#include "brics_3d_sdk/util/PCLTypecaster.h"
 
 //Todo add the comments
-namespace BRICS_3D {
 
 class EuclideanClusterExtractor {
 private:
@@ -36,17 +35,17 @@ private:
 	/**
 	 * Utility  object to type-cast data-types between BRICS_3D and PCL
 	 */
-	BRICS_3D::PCLTypecaster pclTypecaster;
+	BRICS_3D::SDK::PCLTypecaster pclTypecaster;
 
 	/**
 	 * Object for extracting euclidean clusters
 	 */
-	BRICS_3D::EucledeanClusterExtraction euclideanClusterExtractor;
+	BRICS_3D::SDK::EucledeanClusterExtraction euclideanClusterExtractor;
 
 	/**
 	 * Object for estimating 3D centroids of the estimated object clusters
 	 */
-	BRICS_3D::Centroid3DEstimation centroid3DEstimator;
+	BRICS_3D::SDK::Centroid3DEstimation centroid3DEstimator;
 
 	/**
 	 * Maximum number of object clusters which will be published. The first three object clusters
@@ -160,6 +159,5 @@ public:
 
 };
 
-}
 
 #endif /* EUCLIDEANCLUSTEREXTRACTION_H_ */

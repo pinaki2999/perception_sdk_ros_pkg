@@ -7,7 +7,6 @@
 
 #include "ColorBasedRoiExtractor.h"
 
-namespace BRICS_3D {
 
 ColorBasedRoiExtractor::ColorBasedRoiExtractor() {}
 
@@ -71,5 +70,4 @@ void ColorBasedRoiExtractor::kinectCloudCallback(const sensor_msgs::PointCloud2 
 
 }
 
-}
 

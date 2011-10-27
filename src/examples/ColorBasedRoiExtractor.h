@@ -19,12 +19,10 @@
 #include "pcl/PointIndices.h"
 #include "pcl/filters/extract_indices.h"
 
-#include "filtering/ColorBasedROIExtractorHSV.h"
-#include "util/ColorSpaceConvertor.h"
-#include "util/PCLTypecaster.h"
+#include "brics_3d_sdk/filtering/ColorBasedROIExtractorHSV.h"
+#include "brics_3d_sdk/util/ColorSpaceConvertor.h"
+#include "brics_3d_sdk/util/PCLTypecaster.h"
 #include "core/ColoredPointCloud3D.h"
-
-namespace BRICS_3D {
 
 //ToDo update the extractor to also use some default V values to be more flexible.
 
@@ -39,17 +37,17 @@ private:
 	/**
 	 * object for extracting ROIs based on HSV-color space limits
 	 */
-	BRICS_3D::ColorBasedROIExtractorHSV hsvBasedRoiExtractor;
+	BRICS_3D::SDK::ColorBasedROIExtractorHSV hsvBasedRoiExtractor;
 
 	/**
 	 * Utility object for color-space transforms
 	 */
-	BRICS_3D::ColorSpaceConvertor colorSpaceConvertor;
+	BRICS_3D::SDK::ColorSpaceConvertor colorSpaceConvertor;
 
 	/**
 	 * Utility object for type-casting data between BRICS_3D and PCL
 	 */
-	BRICS_3D::PCLTypecaster pclTypeCaster;
+	BRICS_3D::SDK::PCLTypecaster pclTypeCaster;
 
 public:
 	ColorBasedRoiExtractor();
@@ -90,6 +88,6 @@ public:
 
 };
 
-}
+
 
 #endif /* COLORBASEDROIEXTRACTOR_H_ */

@@ -35,7 +35,7 @@
  */
 
 using namespace std;
-BRICS_3D::ColorBasedRoiExtractor *roiExtractor;
+ColorBasedRoiExtractor *roiExtractor;
 int noOfRegions = 0;
 
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
 
 	//Define the color based region extractors
 
-	if( (roiExtractor = (BRICS_3D::ColorBasedRoiExtractor *)malloc(noOfRegions*sizeof(BRICS_3D::ColorBasedRoiExtractor))) == NULL ){
+	if( (roiExtractor = (ColorBasedRoiExtractor *)malloc(noOfRegions*sizeof(ColorBasedRoiExtractor))) == NULL ){
 		ROS_ERROR("Memory Allocation Error!!");
 		exit(0);
 	}

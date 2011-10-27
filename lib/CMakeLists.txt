@@ -3,13 +3,13 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 # define sources lists for libraries (cpp files)
 SET (CORE_LIBRARY_SOURCES
-    ./core/util/ColorSpaceConvertor
-    ./core/filtering/IColorBasedROIExtractor
-    ./core/filtering/ColorBasedROIExtractorHSV
-    ./core/util/SimplePointCloudGeneratorCube
-    ./core/util/PCLTypecaster
-    ./core/segmentation/EuclideanClusterExtraction
-    ./core/features/Centroid3DEstimation
+    ./brics_3d_sdk/util/ColorSpaceConvertor
+    ./brics_3d_sdk/filtering/IColorBasedROIExtractor
+    ./brics_3d_sdk/filtering/ColorBasedROIExtractorHSV
+    ./brics_3d_sdk/util/SimplePointCloudGeneratorCube
+    ./brics_3d_sdk/util/PCLTypecaster
+    ./brics_3d_sdk/segmentation/EuclideanClusterExtraction
+    ./brics_3d_sdk/features/Centroid3DEstimation
 )
 
 # compile libraries

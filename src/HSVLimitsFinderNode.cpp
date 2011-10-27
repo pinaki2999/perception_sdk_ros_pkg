@@ -41,7 +41,7 @@
 using namespace std;
 
 //Global Variables
-BRICS_3D::ColorBasedRoiExtractor roiExtractor;
+ColorBasedRoiExtractor roiExtractor;
 int minH, maxH, minS, maxS;
 ofstream configFileStream;
 

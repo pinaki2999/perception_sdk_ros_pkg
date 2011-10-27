@@ -52,7 +52,7 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
 
     //Publish the extracted clusters
 
-    for (unsigned int i = 0; i < maxNoOfObjects; i++){
+    for (int i = 0; i < maxNoOfObjects; i++){
     	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
     	Eigen::Vector3d centroid3d = centroid3DEstimator.estmateCentroid(extracted_clusters[i]);
 

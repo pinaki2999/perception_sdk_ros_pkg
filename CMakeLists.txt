@@ -29,12 +29,9 @@ LINK_DIRECTORIES(
 
 # add include directories (-I)
 INCLUDE_DIRECTORIES(
-     /home/pinaki/hack-arena/BRICS_3D/src
+     /home/pinaki/hack-arena/BRICS_3D/src/
      /home/pinaki/hack-arena/BRICS_3D/external
-     ${PROJECT_SOURCE_DIR}/lib/core
-     /home/pinaki/hack-arena/Others/libfreenect/include
-     /home/pinaki/hack-arena/Others/libfreenect/wrappers/c_sync
-     
+     ${PROJECT_SOURCE_DIR}/lib
 )
 
 
@@ -50,7 +47,9 @@ rosbuild_add_executable(hsvLimitsFinder src/HSVLimitsFinderNode.cpp
 						src/examples/ColorBasedRoiExtractor)
 target_link_libraries(hsvLimitsFinder perception_sdk_core)
 
-#executable for object cluster extraction
+
+#executable for cluster extraction finder
 rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
 						src/examples/EuclideanClusterExtractor)
 target_link_libraries(objectClusterExtractor perception_sdk_core)
+
