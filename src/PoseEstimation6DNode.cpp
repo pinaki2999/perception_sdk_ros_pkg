@@ -101,6 +101,7 @@ int main(int argc, char* argv[]){
         	subTopic << "region_"<< i+1 << "_obj_cluster_" << j+1;
         	objectClusterSubscriber[i]= nh.subscribe(subTopic.str(), 1,
         			&BRICS_3D::PoseEstimation6DExample::kinectCloudCallback, &poseEstimator[i][j]);
+        	poseEstimator[i][j].setModelPublisher(&estimatedModelPublisher[i][j]);
 		}
     }
 

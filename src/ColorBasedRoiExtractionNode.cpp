@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
 	ros::init(argc, argv, "colorBasedRoiExtractor");
 	ros::NodeHandle nh;
 
-/*	if(argc < 2){
+	if(argc < 2){
 		ROS_ERROR("Not enough arguments:\n Usage:\t "
 				"rosrun colorBasedRoiExtractor <no_of_regions> <region_1_config_file> "
 				"<region_2_config_file>....");
@@ -61,9 +61,9 @@ int main(int argc, char* argv[]){
 
 	//Set up no of regions requested by the user for extraction
 	noOfRegions = atoi(argv[1]);
-*/
-    noOfRegions = 1;
-    argv[2] = "/home/pinaki/hack-arena/ROS/perception_sdk_ros_pkg/redRoiConfig.cfg";
+
+//    noOfRegions = 1;
+//    argv[2] = "/home/pinaki/hack-arena/ROS/perception_sdk_ros_pkg/redRoiConfig.cfg";
 
 	//Define the publishers for each extracted region
 	ros::Publisher extractedRoiPublisher[noOfRegions];

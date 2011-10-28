@@ -33,9 +33,10 @@ void PoseEstimationICP::estimatePose(BRICS_3D::PointCloud3D *inCloud, BRICS_3D::
     pcl::PointCloud<pcl::PointXYZ> Final;
 
     pclTypecaster.convertToPCLDataType(targetCloudPtr, inCloud);
-    pclTypecaster.convertToPCLDataType(objectModelPtr, objectModel);
+    std::cout << "object model cloud size: " << objectModel->getSize()<< std::endl;;
+ //   pclTypecaster.convertToPCLDataType(objectModelPtr, &objectModel);
 
-     icp.setInputCloud(objectModelPtr);
+/*     icp.setInputCloud(objectModelPtr);
      icp.setInputTarget(targetCloudPtr);
      icp.setMaxCorrespondenceDistance(distance);
      icp.setTransformationEpsilon (transformationEpsilon);
@@ -49,7 +50,7 @@ void PoseEstimationICP::estimatePose(BRICS_3D::PointCloud3D *inCloud, BRICS_3D::
      //Fixme if required ,)
      pcl::PointCloud<pcl::PointXYZ>::Ptr FinalCloudPtr(&Final);
      pclTypecaster.convertToPCLDataType(FinalCloudPtr, outCloud);
-
+*/
 }
 
 }

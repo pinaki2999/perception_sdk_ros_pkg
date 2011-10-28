@@ -9,7 +9,9 @@
 
 namespace BRICS_3D{
 
-EuclideanClusterExtractor::EuclideanClusterExtractor() {}
+EuclideanClusterExtractor::EuclideanClusterExtractor() {
+	maxNoOfObjects = 3;
+}
 
 ros::Publisher *EuclideanClusterExtractor::getExtractedClusterPublisher() const
 {
@@ -39,20 +41,27 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_xyz_rgb_ptr(new pcl::PointCloud<pcl::PointXYZRGB>());
 
-    BRICS_3D::PointCloud3D *in_cloud = new BRICS_3D::PointCloud3D();
-    std::vector<BRICS_3D::PointCloud3D*> extracted_clusters;
+
+
 
 
     //Transform sensor_msgs::PointCloud2 msg to pcl::PointCloud
     pcl::fromROSMsg (cloud, *cloud_xyz_rgb_ptr);
+
+    if(cloud_xyz_rgb_ptr->size() > this->euclideanClusterExtractor.getMinClusterSize()){
+        BRICS_3D::PointCloud3D *in_cloud = new BRICS_3D::PointCloud3D();
+        std::vector<BRICS_3D::PointCloud3D*> extracted_clusters;
     // cast PCL to BRICS_3D type
     pclTypecaster.convertToBRICS3DDataType(cloud_xyz_rgb_ptr, in_cloud);
+
     //extract the clusters
     euclideanClusterExtractor.extractClusters(in_cloud, &extracted_clusters);
     ROS_INFO("No of clusters found: %d", extracted_clusters.size());
     //Publish the extracted clusters
 	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
-    for (unsigned int i = 0; i < extracted_clusters.size(); i++){
+    for (int i = 0; i < maxNoOfObjects; i++){
+
+    	if(extracted_clusters[i]->getSize() > 0){
     	Eigen::Vector3d centroid3d = centroid3DEstimator.computeCentroid(extracted_clusters[i]);
 
     	pclTypecaster.convertToPCLDataType(tempCloud, extracted_clusters[i]);
@@ -68,11 +77,13 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
          transform.setRotation( tf::Quaternion(0, 0, 0) );
          br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/openni_rgb_optical_frame",
         		 extractedClusterPublisher[i].getTopic()));
+    	}
     }
 
     tempCloud.reset();
     delete(in_cloud);
     extracted_clusters.clear();
+    }
 
 }
 

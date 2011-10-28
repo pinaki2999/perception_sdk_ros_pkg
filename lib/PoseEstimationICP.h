@@ -11,7 +11,7 @@
 
 #include "core/PointCloud3D.h"
 #include "util/PCLTypecaster.h"
-
+#include <iostream>
 
 #include <pcl/registration/icp.h>
 #include <pcl/registration/icp_nl.h>
