@@ -45,12 +45,12 @@ BRICS_3D::EuclideanClusterExtractor *objectClusterExtractor;
 int maxNoOfObjects;
 int noOfRegions;
 
-void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
-	for(int i=0; i<noOfRegions;i++){
-		ROS_INFO("received a kinect message...");
-		objectClusterExtractor[i].kinectCloudCallback(cloud);
-	}
-}
+//void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
+//	for(int i=0; i<noOfRegions;i++){
+//		ROS_INFO("received a kinect message...");
+//		objectClusterExtractor[i].kinectCloudCallback(cloud);
+//	}
+//}
 
 int main(int argc, char* argv[]){
 
@@ -75,7 +75,8 @@ int main(int argc, char* argv[]){
 	//Define the publishers for each extracted region
 	ros::Publisher extractedClusterPublisher[noOfRegions][maxNoOfObjects];
 
-	//Define the color based region extractors
+	//Define the cluster extractors
+	//Todo replace malloc
 	if( (objectClusterExtractor = (BRICS_3D::EuclideanClusterExtractor *)malloc
 			(noOfRegions*sizeof(BRICS_3D::EuclideanClusterExtractor ))) == NULL ){
 		ROS_ERROR("Memory Allocation Error!!");
