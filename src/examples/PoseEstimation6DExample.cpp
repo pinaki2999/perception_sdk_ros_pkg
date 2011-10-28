@@ -11,6 +11,9 @@ namespace BRICS_3D {
 
 PoseEstimation6DExample::PoseEstimation6DExample() {
 
+	cube2D = new BRICS_3D::PointCloud3D();
+	cube3D = new BRICS_3D::PointCloud3D();
+
 	cubeModelGenerator.setPointsOnEachSide(100);
 	cubeModelGenerator.setCubeSideLength(0.06);
 
@@ -46,16 +49,53 @@ void PoseEstimation6DExample::kinectCloudCallback(const sensor_msgs::PointCloud2
 	    pclTypecaster.convertToBRICS3DDataType(cloud_xyz_ptr, in_cloud);
 	    ROS_INFO("Size of input cloud: %d ", in_cloud->getSize());
 
+	    ROS_INFO("Cube Size: %d", cube2D->getSize());
+
+	    //=============================================================================================
+	    			xTrans = centroid3d[0];
+	                yTrans = centroid3d[1];
+	                zTrans = centroid3d[2];
+	                ROS_INFO("Best estimate \n\tTranslation-[x,y,z,]=[%f,%f,%f]",xTrans, yTrans, zTrans);
+
+
+	         /**Check if the camera has moved or not. If true the centroid of the point clouds will be shifted*/
+
+	                float centroid_shift_distance = sqrt ((lastCentroid[0]-xTrans)*(lastCentroid[0]-xTrans) +
+	                                                 (lastCentroid[1]-yTrans)*(lastCentroid[1]-yTrans) +
+	                                                  (lastCentroid[2]-zTrans)*(lastCentroid[2]-zTrans) ) ;
+	                float epsilon = 0.005;
+	                //ROS_INFO("[%s] Centroid Shift Distance: %f",object_id.c_str(), centroid_shift_distance);
+
+
+	                if( centroid_shift_distance > epsilon ) {
+	                    best_score = DBL_MAX;
+	                    lastCentroid[0] = xTrans;
+	                    lastCentroid[1] = yTrans;
+	                    lastCentroid[2] = zTrans;
+	                }
+
+
+	           /**Translate the cube models which will be our initial estimate for ICP*/
+	                Eigen::Matrix4f homogeneousMatrix;
+	                pcl::PointCloud<pcl::PointXYZ> transformedCubeModel3D;
+	                pcl::PointCloud<pcl::PointXYZ> transformedCubeModel2D;
+	                calculateHomogeneousMatrix(0,0,0,xTrans,yTrans,zTrans,homogeneousMatrix,true);
+	                //calculateHomogeneousMatrix(0,0,0,0,0,0,homogeneousMatrix,true);
+	                applyHomogeneousTransformation(&cubeModel3D, &transformedCubeModel3D, homogeneousMatrix);
+	                applyHomogeneousTransformation(&cubeModel2D, &transformedCubeModel2D, homogeneousMatrix);
+
+	    //=============================================================================================
+
 
 	//Performing 2D model alignment
 	BRICS_3D::PointCloud3D *finalModel2D = new BRICS_3D::PointCloud3D();
-	poseEstimatorICP.setDistance(5);
-	//poseEstimatorICP.setDistance(0.01);
+	//poseEstimatorICP.setDistance(5);
+	poseEstimatorICP.setDistance(0.01);
 	poseEstimatorICP.setMaxIterations(1000);
 	poseEstimatorICP.setObjectModel(cube2D);
 	poseEstimatorICP.estimatePose(in_cloud, finalModel2D);
 	float score2D = poseEstimatorICP.getFitnessScore();
-/*
+
 
 	//Performing 2D model alignment
 		BRICS_3D::PointCloud3D *finalModel3D = new BRICS_3D::PointCloud3D();
@@ -85,10 +125,10 @@ void PoseEstimation6DExample::kinectCloudCallback(const sensor_msgs::PointCloud2
 
 	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
 	modelPublisher->publish(*estimated_model_ptr);
-*/
+
 	delete in_cloud;
 	delete finalModel2D;
-//	delete finalModel3D;
+	delete finalModel3D;
 
 	}
 }
