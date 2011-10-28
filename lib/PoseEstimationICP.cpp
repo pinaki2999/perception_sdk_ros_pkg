@@ -43,8 +43,8 @@ void PoseEstimationICP::estimatePose(BRICS_3D::PointCloud3D *inCloud, BRICS_3D::
 
      icp.align(Final);
 
-     setFitnessScore(icp.getFitnessScore());
-     setFinalTransformation(icp.getFinalTransformation());
+     this->fitnessScore=icp.getFitnessScore();
+     this->finalTransformation = icp.getFinalTransformation();
 
      //Fixme if required ,)
      pcl::PointCloud<pcl::PointXYZ>::Ptr FinalCloudPtr(&Final);

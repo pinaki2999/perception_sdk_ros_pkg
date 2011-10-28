@@ -65,16 +65,6 @@ public:
         return transformationEpsilon;
     }
 
-    void setFinalTransformation(Eigen::Matrix4f finalTransformation)
-    {
-        this->finalTransformation = finalTransformation;
-    }
-
-    void setFitnessScore(float fitnessScore)
-    {
-        this->fitnessScore = fitnessScore;
-    }
-
     void setMaxIterations(int maxIterations)
     {
         this->maxIterations = maxIterations;
