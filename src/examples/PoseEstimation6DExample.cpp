@@ -19,8 +19,8 @@ PoseEstimation6DExample::PoseEstimation6DExample() {
 	cube2D = new BRICS_3D::PointCloud3D();
 	cube3D = new BRICS_3D::PointCloud3D();
 
-	cubeModelGenerator.setPointsOnEachSide(5);
-	cubeModelGenerator.setCubeSideLength(0.06);
+	cubeModelGenerator.setPointsOnEachSide(10);
+	cubeModelGenerator.setCubeSideLength(0.05);
 
 	cubeModelGenerator.setNumOfFaces(2);
 	cubeModelGenerator.generatePointCloud(cube2D);
@@ -137,13 +137,19 @@ void PoseEstimation6DExample::kinectCloudCallback(const sensor_msgs::PointCloud2
 	}
 
 	//	ROS_INFO("Resultant cloud size: %d", estimated_model_ptr->size());
-	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
-	modelPublisher->publish(*estimated_model_ptr);
+//	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
+//	modelPublisher->publish(*estimated_model_ptr);
 
-	//	                pclTypecaster.convertToPCLDataType(estimated_model_ptr,transformedCubeModel3D);
-	//	                ROS_INFO("Resultant cloud size: %d", estimated_model_ptr->size());
-	//	                estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
-	//	            	modelPublisher->publish(*estimated_model_ptr);
+		                //pclTypecaster.convertToPCLDataType(estimated_model_ptr,transformedCubeModel3D);
+		                estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
+		            	modelPublisher->publish(*estimated_model_ptr);
+
+
+//	pclTypecaster.convertToPCLDataType(estimated_model_ptr,cube3D);
+//	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
+//	modelPublisher->publish(*estimated_model_ptr);
+
+
 	delete in_cloud;
 	delete finalModel2D;
 	delete finalModel3D;

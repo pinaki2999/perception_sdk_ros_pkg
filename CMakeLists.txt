@@ -24,13 +24,13 @@ gencfg()
 
 # add library directories (-L)
 LINK_DIRECTORIES(
-    /home/pinaki/hack-arena/BRICS_3D/lib/
+    /home/reon/hack_arena/BRICS_3D/lib/
 )
 
 # add include directories (-I)
 INCLUDE_DIRECTORIES(
-     /home/pinaki/hack-arena/BRICS_3D/src
-     /home/pinaki/hack-arena/BRICS_3D/external
+     /home/reon/hack_arena/BRICS_3D/src
+     /home/reon/hack_arena/BRICS_3D/external
      ${PROJECT_SOURCE_DIR}/lib
 )
 
@@ -59,4 +59,9 @@ rosbuild_add_executable(gopalPoseEstimator6D src/PoseEstimation6DNode.cpp
 						src/examples/PoseEstimation6DExample lib/PoseEstimationICP)
 target_link_libraries(gopalPoseEstimator6D   
 										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
+
+#rosbuild_add_executable(gopalPoseEstimator6D src/PoseEstimation6DNode.cpp 
+#						src/examples/PoseEstimation6DExample_PCL)
+#target_link_libraries(gopalPoseEstimator6D   
+#										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
 										

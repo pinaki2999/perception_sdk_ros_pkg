@@ -15,6 +15,7 @@
 
 //BRICS_3D specific headers
 #include "examples/PoseEstimation6DExample.h"
+//#include "examples/PoseEstimation6DExample_PCL.h"
 
 //Sytem-wide Standard Headers
 #include <fstream>
