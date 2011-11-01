@@ -7,6 +7,11 @@
 
 #include "PoseEstimation6DExample.h"
 
+#include <pcl/registration/icp.h>
+#include <pcl/registration/icp_nl.h>
+#include <pcl/registration/registration.h>
+#include <pcl/common/transform.h>
+
 namespace BRICS_3D {
 
 PoseEstimation6DExample::PoseEstimation6DExample() {
@@ -14,7 +19,7 @@ PoseEstimation6DExample::PoseEstimation6DExample() {
 	cube2D = new BRICS_3D::PointCloud3D();
 	cube3D = new BRICS_3D::PointCloud3D();
 
-	cubeModelGenerator.setPointsOnEachSide(100);
+	cubeModelGenerator.setPointsOnEachSide(5);
 	cubeModelGenerator.setCubeSideLength(0.06);
 
 	cubeModelGenerator.setNumOfFaces(2);
@@ -24,7 +29,7 @@ PoseEstimation6DExample::PoseEstimation6DExample() {
 	cubeModelGenerator.generatePointCloud(cube3D);
 
 	reliableScoreThreshold = 0.00008;
-
+	bestScore = 1000;
 }
 
 PoseEstimation6DExample::~PoseEstimation6DExample() {
@@ -38,98 +43,112 @@ void PoseEstimation6DExample::kinectCloudCallback(const sensor_msgs::PointCloud2
 
 	//Transforming Input message to BRICS_3D format
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz_ptr(new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZ>::Ptr estimated_model_ptr(new pcl::PointCloud<pcl::PointXYZ>());
+	pcl::PointCloud<pcl::PointXYZ>::Ptr estimated_model_ptr(new pcl::PointCloud<pcl::PointXYZ>());
 
-    BRICS_3D::PointCloud3D *in_cloud = new BRICS_3D::PointCloud3D();
+	BRICS_3D::PointCloud3D *in_cloud = new BRICS_3D::PointCloud3D();
 
-	    //Transform sensor_msgs::PointCloud2 msg to pcl::PointCloud
-	    pcl::fromROSMsg (cloud, *cloud_xyz_ptr);
+	//Transform sensor_msgs::PointCloud2 msg to pcl::PointCloud
+	pcl::fromROSMsg (cloud, *cloud_xyz_ptr);
 
-	    // cast PCL to BRICS_3D type
-	    pclTypecaster.convertToBRICS3DDataType(cloud_xyz_ptr, in_cloud);
-	    ROS_INFO("Size of input cloud: %d ", in_cloud->getSize());
-
-	    ROS_INFO("Cube Size: %d", cube2D->getSize());
-
-	    //=============================================================================================
-	    			xTrans = centroid3d[0];
-	                yTrans = centroid3d[1];
-	                zTrans = centroid3d[2];
-	                ROS_INFO("Best estimate \n\tTranslation-[x,y,z,]=[%f,%f,%f]",xTrans, yTrans, zTrans);
+	// cast PCL to BRICS_3D type
+	pclTypecaster.convertToBRICS3DDataType(cloud_xyz_ptr, in_cloud);
+	ROS_INFO("Size of input cloud: %d ", in_cloud->getSize());
 
 
-	         /**Check if the camera has moved or not. If true the centroid of the point clouds will be shifted*/
-
-	                float centroid_shift_distance = sqrt ((lastCentroid[0]-xTrans)*(lastCentroid[0]-xTrans) +
-	                                                 (lastCentroid[1]-yTrans)*(lastCentroid[1]-yTrans) +
-	                                                  (lastCentroid[2]-zTrans)*(lastCentroid[2]-zTrans) ) ;
-	                float epsilon = 0.005;
-	                //ROS_INFO("[%s] Centroid Shift Distance: %f",object_id.c_str(), centroid_shift_distance);
+	//=============================================================================================
 
 
-	                if( centroid_shift_distance > epsilon ) {
-	                    best_score = DBL_MAX;
-	                    lastCentroid[0] = xTrans;
-	                    lastCentroid[1] = yTrans;
-	                    lastCentroid[2] = zTrans;
-	                }
+	BRICS_3D::Centroid3D centroidEstimator;
+	Eigen::Vector3d centroid3d = centroidEstimator.computeCentroid(in_cloud);
+	float xTrans = centroid3d[0];
+	float yTrans = centroid3d[1];
+	float zTrans = centroid3d[2];
+
+	//	                ROS_INFO("Initial estimate \n\tTranslation-[x,y,z,]=[%f,%f,%f]",xTrans, yTrans, zTrans);
 
 
-	           /**Translate the cube models which will be our initial estimate for ICP*/
-	                Eigen::Matrix4f homogeneousMatrix;
+
+	/**Translate the cube models which will be our initial estimate for ICP*/
+
+	/*
 	                pcl::PointCloud<pcl::PointXYZ> transformedCubeModel3D;
 	                pcl::PointCloud<pcl::PointXYZ> transformedCubeModel2D;
-	                calculateHomogeneousMatrix(0,0,0,xTrans,yTrans,zTrans,homogeneousMatrix,true);
-	                //calculateHomogeneousMatrix(0,0,0,0,0,0,homogeneousMatrix,true);
-	                applyHomogeneousTransformation(&cubeModel3D, &transformedCubeModel3D, homogeneousMatrix);
-	                applyHomogeneousTransformation(&cubeModel2D, &transformedCubeModel2D, homogeneousMatrix);
+	            	Translation<double,3> translation(xTrans, yTrans, zTrans);
+	            	Transform3d transformation = translation;
+	            	BRICS_3D::HomogeneousMatrix44* homogeneousTrans = new HomogeneousMatrix44(&transformation);
+	            	cube2D.homogeneousTransformation(homogeneousTrans);
+	                cube3D.homogeneousTransformation(homogeneousTrans);
+	 */
+	BRICS_3D::PointCloud3D *transformedCubeModel2D = new BRICS_3D::PointCloud3D();
+	BRICS_3D::PointCloud3D *transformedCubeModel3D = new BRICS_3D::PointCloud3D();
+	Eigen::Matrix4f  homogeneousMatrix;
+	calculateHomogeneousMatrix(0,0,0,xTrans,yTrans,zTrans,homogeneousMatrix,1);
+	applyHomogeneousTransformation(cube2D,transformedCubeModel2D,homogeneousMatrix);
+	applyHomogeneousTransformation(cube3D,transformedCubeModel3D,homogeneousMatrix);
+	//	        	    ROS_INFO("Transformed Cube Size 2D: %d", transformedCubeModel2D->getSize());
+	//	        	    ROS_INFO("Transformed Cube Size 3D: %d", transformedCubeModel3D->getSize());
 
-	    //=============================================================================================
+	//=============================================================================================
+
 
 
 	//Performing 2D model alignment
 	BRICS_3D::PointCloud3D *finalModel2D = new BRICS_3D::PointCloud3D();
 	//poseEstimatorICP.setDistance(5);
-	poseEstimatorICP.setDistance(0.01);
+	poseEstimatorICP.setDistance(0.1);
 	poseEstimatorICP.setMaxIterations(1000);
-	poseEstimatorICP.setObjectModel(cube2D);
+	poseEstimatorICP.setObjectModel(transformedCubeModel2D);
 	poseEstimatorICP.estimatePose(in_cloud, finalModel2D);
 	float score2D = poseEstimatorICP.getFitnessScore();
 
 
 	//Performing 2D model alignment
-		BRICS_3D::PointCloud3D *finalModel3D = new BRICS_3D::PointCloud3D();
-		poseEstimatorICP.setDistance(0.01);
-		poseEstimatorICP.setMaxIterations(1000);
-		poseEstimatorICP.setObjectModel(cube3D);
-		poseEstimatorICP.estimatePose(in_cloud, finalModel3D);
-		float score3D = poseEstimatorICP.getFitnessScore();
+	BRICS_3D::PointCloud3D *finalModel3D = new BRICS_3D::PointCloud3D();
+	poseEstimatorICP.setObjectModel(transformedCubeModel3D);
+	poseEstimatorICP.estimatePose(in_cloud, finalModel3D);
+	float score3D = poseEstimatorICP.getFitnessScore();
 
 	if(score2D<score3D){
 		//publish model estimated using two sided cube
-		if(score2D > reliableScoreThreshold){
-			ROS_INFO("[%s] Approximate Model Found!! Object May Not be visible enough...", modelPublisher->getTopic().c_str());
-		} else {
-			ROS_INFO("[%s] Reliable Model Found :) ", modelPublisher->getTopic().c_str());
+		if(score2D < bestScore){
+			if(score2D > reliableScoreThreshold){
+				ROS_INFO("[%s] Approximate Model Found(2D)!! Object May Not be visible enough...", modelPublisher->getTopic().c_str());
+			} else {
+				ROS_INFO("[%s] Reliable Model Found(2D) :) ", modelPublisher->getTopic().c_str());
+			}
 		}
-		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel2D);
+			pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel2D);
+			ROS_INFO("Best score found by 3D model : %f", score2D);
+			bestScore = score2D;
+
 	} else {
 		//publish model estimated using three sided cube
-		if(score3D > reliableScoreThreshold){
-			ROS_INFO("[%s] Approximate Model Found!! Object May Not be visible enough...", modelPublisher->getTopic().c_str());
-		}else {
-			ROS_INFO("[%s] Reliable Model Found :) ", modelPublisher->getTopic().c_str());
+		if(score3D<bestScore){
+			if(score3D > reliableScoreThreshold){
+				ROS_INFO("[%s] Approximate Model Found(3D)!! Object May Not be visible enough...", modelPublisher->getTopic().c_str());
+			}else {
+				ROS_INFO("[%s] Reliable Model Found(3D) :) ", modelPublisher->getTopic().c_str());
+			}
 		}
-		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
+			pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
+			ROS_INFO("Best score found by 3D model : %f", score3D);
+			bestScore=score3D;
+
 	}
 
+	//	ROS_INFO("Resultant cloud size: %d", estimated_model_ptr->size());
 	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
 	modelPublisher->publish(*estimated_model_ptr);
 
+	//	                pclTypecaster.convertToPCLDataType(estimated_model_ptr,transformedCubeModel3D);
+	//	                ROS_INFO("Resultant cloud size: %d", estimated_model_ptr->size());
+	//	                estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
+	//	            	modelPublisher->publish(*estimated_model_ptr);
 	delete in_cloud;
 	delete finalModel2D;
 	delete finalModel3D;
-
-	}
+	delete transformedCubeModel2D;
+	delete transformedCubeModel3D;
+}
 }
 
