@@ -59,7 +59,13 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     ROS_INFO("No of clusters found: %d", extracted_clusters.size());
     //Publish the extracted clusters
 	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
-    for (int i = 0; i < maxNoOfObjects; i++){
+	int regions;
+	if(extracted_clusters.size() < maxNoOfObjects) {
+		regions = extracted_clusters.size();
+	} else {
+		regions = maxNoOfObjects;
+	}
+    for (int i = 0; i < regions; i++){
 
     	if(extracted_clusters[i]->getSize() > 0){
     	Eigen::Vector3d centroid3d = centroid3DEstimator.computeCentroid(extracted_clusters[i]);
