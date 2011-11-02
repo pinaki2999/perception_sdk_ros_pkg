@@ -64,13 +64,7 @@ int main(int argc, char* argv[]){
 	ros::Publisher estimatedModelPublisher[noOfRegions][maxNoOfObjects];
 
 	//Define the model estimators
-	//Todo replace malloc
 	BRICS_3D::PoseEstimation6DExample poseEstimator[noOfRegions][maxNoOfObjects];
-//	if( (poseEstimator = (BRICS_3D::PoseEstimation6DExample *)malloc
-//			(noOfRegions*maxNoOfObjects*sizeof(BRICS_3D::PoseEstimation6DExample ))) == NULL ){
-//		ROS_ERROR("Memory Allocation Error!!");
-//		exit(0);
-//	}
 
 
 	for (int i = 0; i<noOfRegions; i++){
@@ -83,26 +77,22 @@ int main(int argc, char* argv[]){
 			estimatedModelPublisher[i][j] = nh.advertise< pcl::PointCloud<pcl::PointXYZ> >
 																				(pubTopic.str(), 1);
 		}
-
-		//initialize the model estimators
-//		objectClusterExtractor[i].initializeExtractor(maxNoOfObjects,extractedClusterPublisher[i],
-//																				200,25000, 0.01);
 	}
 
 	//subscribe to kinect point cloud messages
-	//extracted_region_
 
-    ros::Subscriber  objectClusterSubscriber[noOfRegions*maxNoOfObjects];
-
+	ros::Subscriber  objectClusterSubscriber[noOfRegions*maxNoOfObjects];
+	int count = 0;
     for (int i = 0; i < noOfRegions ; i++){
     	for (int j = 0; j < maxNoOfObjects; j++) {
         	std::stringstream subTopic;
         	subTopic.str("");
         	subTopic.clear();
         	subTopic << "region_"<< i+1 << "_obj_cluster_" << j+1;
-        	objectClusterSubscriber[i]= nh.subscribe(subTopic.str(), 1,
+        	objectClusterSubscriber[count]= nh.subscribe(subTopic.str(), 1,
         			&BRICS_3D::PoseEstimation6DExample::kinectCloudCallback, &poseEstimator[i][j]);
         	poseEstimator[i][j].setModelPublisher(&estimatedModelPublisher[i][j]);
+        	count++;
 		}
     }
 

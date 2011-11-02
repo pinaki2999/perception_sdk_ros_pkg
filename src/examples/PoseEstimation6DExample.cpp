@@ -52,7 +52,7 @@ PoseEstimation6DExample::~PoseEstimation6DExample() {
 
 void PoseEstimation6DExample::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 
-
+	ROS_INFO("Looking For: %s ", modelPublisher->getTopic().c_str());
 	//Transforming Input message to BRICS_3D format
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz_ptr(new pcl::PointCloud<pcl::PointXYZ>());
 	pcl::PointCloud<pcl::PointXYZ>::Ptr estimated_model_ptr(new pcl::PointCloud<pcl::PointXYZ>());
