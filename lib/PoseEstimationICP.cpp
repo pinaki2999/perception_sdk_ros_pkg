@@ -38,9 +38,10 @@ void PoseEstimationICP::estimatePose(BRICS_3D::PointCloud3D *inCloud, BRICS_3D::
 
      icp.setInputCloud(objectModelPtr);
      icp.setInputTarget(targetCloudPtr);
-     icp.setMaxCorrespondenceDistance(100);
+     icp.setMaxCorrespondenceDistance(distance);
      icp.setTransformationEpsilon (transformationEpsilon);
      icp.setMaximumIterations (maxIterations);
+
 
 
      int count=0;

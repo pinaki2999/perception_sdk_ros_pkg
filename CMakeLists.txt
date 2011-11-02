@@ -22,17 +22,21 @@ rosbuild_find_ros_package(dynamic_reconfigure)
 include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
 gencfg()
 
+ADD_DEFINITIONS(-DEIGEN3)
+
 # add library directories (-L)
 LINK_DIRECTORIES(
-    /home/reon/hack_arena/BRICS_3D/lib/
+    /home/pinaki/hack-arena/BRICS_3D/lib/
 )
 
 # add include directories (-I)
 INCLUDE_DIRECTORIES(
-     /home/reon/hack_arena/BRICS_3D/src
-     /home/reon/hack_arena/BRICS_3D/external
+     /home/pinaki/hack-arena/BRICS_3D/src
+     /home/pinaki/hack-arena/BRICS_3D/external
      ${PROJECT_SOURCE_DIR}/lib
 )
+
+
 
 
 #ADD_SUBDIRECTORY(./lib) #compile everything in lib to create the libraries

@@ -40,40 +40,6 @@ class PoseEstimation6DExample {
 
 	float bestScore;
 
-	void applyHomogeneousTransformation(BRICS_3D::PointCloud3D * cloud, BRICS_3D::PointCloud3D*
-	transformedCloudCube, Eigen::Matrix4f  &homogenousMatrix){
-		/*
-		 * layout:
-		 * 0 4 8  12
-		 * 1 5 9  13
-		 * 2 6 10 14
-		 * 3 7 11 15
-		 */
-		/* rotate */
-
-		for (unsigned int i = 0; i < cloud->getSize(); i++ ) {
-			float xTemp,yTemp,zTemp;
-			xTemp = (cloud->getPointCloud()->data()[i].getX() * homogenousMatrix[0] +
-					cloud->getPointCloud()->data()[i].getY() * homogenousMatrix[4] +
-					cloud->getPointCloud()->data()[i].getZ() * homogenousMatrix[8]);
-			yTemp = cloud->getPointCloud()->data()[i].getX() * homogenousMatrix[1] +
-					cloud->getPointCloud()->data()[i].getY() * homogenousMatrix[5] +
-					cloud->getPointCloud()->data()[i].getZ() * homogenousMatrix[9];
-			zTemp = cloud->getPointCloud()->data()[i].getX() * homogenousMatrix[2] +
-					cloud->getPointCloud()->data()[i].getY() * homogenousMatrix[6] +
-					cloud->getPointCloud()->data()[i].getZ() * homogenousMatrix[10];
-
-			/* translate */
-			BRICS_3D::Point3D *tempPoint = new BRICS_3D::Point3D(xTemp + homogenousMatrix[12], yTemp + homogenousMatrix[13],zTemp + homogenousMatrix[14]);
-			transformedCloudCube->addPoint(tempPoint);
-			delete tempPoint;
-}
-
-
-
-	}
-
-
 
 	void calculateHomogeneousMatrix(float xRot,float yRot,
 			float zRot, float xtrans, float ytrans, float ztrans, Eigen::Matrix4f  &homogeneousMatrix, bool inDegrees){
