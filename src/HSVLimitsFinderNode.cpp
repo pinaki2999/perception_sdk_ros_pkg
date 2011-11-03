@@ -91,7 +91,7 @@ int saveConfig(ofstream &configFileStream){
 int main(int argc, char* argv[]){
 
 	//initialize the ros node
-	ros::init(argc, argv, "hsvLimitsFinder");
+	ros::init(argc, argv, "HSV_LimitsFinder");
 	ros::NodeHandle nh;
 
 	//set up the dynamic configure

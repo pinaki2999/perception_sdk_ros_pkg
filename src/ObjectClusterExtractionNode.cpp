@@ -54,7 +54,7 @@ int noOfRegions;
 
 int main(int argc, char* argv[]){
 
-	ros::init(argc, argv, "objectClusterExtractor");
+	ros::init(argc, argv, "ObjectClusterExtractor");
 	ros::NodeHandle nh;
 
 	if(argc == 2){

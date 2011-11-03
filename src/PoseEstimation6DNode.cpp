@@ -8,14 +8,15 @@
 
 //ROS specific Headers
 #include <ros/ros.h>
+#include "sensor_msgs/PointCloud2.h"
+#include "perception_sdk_ros_pkg/Coordination.h"
 
 //PCL specific Headers
 #include <pcl_ros/point_cloud.h>
 #include "pcl/point_types.h"
 
 //BRICS_3D specific headers
-#include "examples/PoseEstimation6DExample.h"
-//#include "examples/PoseEstimation6DExample_PCL.h"
+#include "examples/PoseEstimation6D.h"
 
 //Sytem-wide Standard Headers
 #include <fstream>
@@ -27,15 +28,39 @@
 
 
 //global variables
+std::vector<BRICS_3D::PoseEstimation6D*> poseEstimators;
+bool perceptionPaused;
+int maxNoOfObjects;
+int noOfRegions;
+
+
+void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
+	if(!perceptionPaused){
+		for(int i=0; i<noOfRegions;i++){
+//			ROS_INFO("received a kinect message...");
+			poseEstimators[i]->kinectCloudCallback(cloud);
+		}
+	} else {
+		ROS_INFO("Perception Engine Paused");
+	}
+}
+
+void perceptionControlCallback(const perception_sdk_ros_pkg::Coordination message){
+
+	if(!message.command.compare("pause")){
+		perceptionPaused=true;
+	}else if(!message.command.compare("resume")){
+		perceptionPaused=false;
+	}
+
+}
 
 
 int main(int argc, char* argv[]){
 
+	perceptionPaused = false;
 
-	int maxNoOfObjects;
-	int noOfRegions;
-
-	ros::init(argc, argv, "poseEstimator6D");
+	ros::init(argc, argv, "PoseEstimation6D");
 	ros::NodeHandle nh;
 
 	if(argc == 2){
@@ -50,49 +75,27 @@ int main(int argc, char* argv[]){
 		maxNoOfObjects = 1;
 	}
 
-	ROS_INFO("Finding pose for at most [%d] object-cluster(s) in [%d] extracted regions",
-																maxNoOfObjects, noOfRegions);
-
-	//Define the publishers for each estimated model
-	ros::Publisher estimatedModelPublisher[noOfRegions][maxNoOfObjects];
+	ROS_INFO("Finding pose for at most [%d] object(s) in [%d] color based extracted regions",
+			maxNoOfObjects, noOfRegions);
 
 	//Define the model estimators
-	BRICS_3D::PoseEstimation6DExample poseEstimator[noOfRegions][maxNoOfObjects];
-
-
-	for (int i = 0; i<noOfRegions; i++){
-		//initialize the publishers
-		for(int j=0; j<maxNoOfObjects; j++){
-			std::stringstream pubTopic;
-			pubTopic.str("");
-			pubTopic.clear();
-			pubTopic << "region_" << i+1 << "_obj_model_" << j+1;
-			estimatedModelPublisher[i][j] = nh.advertise< pcl::PointCloud<pcl::PointXYZ> >
-																				(pubTopic.str(), 1);
-		}
+	for (int i = 0; i< noOfRegions; i++){
+		poseEstimators.push_back(new BRICS_3D::PoseEstimation6D());
 	}
 
+
+	//subscribe to perception engine control messsage
+	ros::Subscriber  perceptionControlSubscriber;
+		perceptionControlSubscriber= nh.subscribe("/perceptionControl", 1,&perceptionControlCallback);
+
 	//subscribe to kinect point cloud messages
-
-	ros::Subscriber  objectClusterSubscriber[noOfRegions*maxNoOfObjects];
-	int count = 0;
-    for (int i = 0; i < noOfRegions ; i++){
-    	for (int j = 0; j < maxNoOfObjects; j++) {
-        	std::stringstream subTopic;
-        	subTopic.str("");
-        	subTopic.clear();
-        	subTopic << "region_"<< i+1 << "_obj_cluster_" << j+1;
-        	objectClusterSubscriber[count]= nh.subscribe(subTopic.str(), 1,
-        			&BRICS_3D::PoseEstimation6DExample::kinectCloudCallback, &poseEstimator[i][j]);
-        	poseEstimator[i][j].setModelPublisher(&estimatedModelPublisher[i][j]);
-        	count++;
-		}
-    }
-
-    ROS_INFO("Now estimating models;)");
+	ros::Subscriber  kinectCloudSubscriber[noOfRegions];
+	for (int i = 0; i < noOfRegions ; i++){
+		kinectCloudSubscriber[i]= nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
+		poseEstimators[i]->setMaxNoOfObjects(maxNoOfObjects);
+	}
 
 	ros::spin();
 
-	//free(objectClusterExtractor);
 	return 0;
 }

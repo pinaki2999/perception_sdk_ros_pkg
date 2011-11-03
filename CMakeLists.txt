@@ -17,10 +17,15 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 
+
+
 # add dynamic reconfigure api
 rosbuild_find_ros_package(dynamic_reconfigure)
 include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
 gencfg()
+
+
+rosbuild_genmsg()
 
 ADD_DEFINITIONS(-DEIGEN3)
 
@@ -65,7 +70,12 @@ target_link_libraries(modelFittingICP
 
 										
 #executable for 6D Pose Estimation
-#rosbuild_add_executable(poseEstimator6D src/PoseEstimation6DNode.cpp 
-#						src/examples/PoseEstimation6DExample lib/PoseEstimationICP)
-#target_link_libraries(poseEstimator6D   
-#										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)										
+rosbuild_add_executable(gopalPoseEstimator6D src/PoseEstimation6DNode.cpp 
+						src/examples/PoseEstimation6D lib/IterativeClosestPoint lib/EuclideanClustering)
+target_link_libraries(gopalPoseEstimator6D   
+										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
+										
+#executable for controlling perception system
+rosbuild_add_executable(gopalPerceptionEngineController src/ControlPerception.cpp)
+
+

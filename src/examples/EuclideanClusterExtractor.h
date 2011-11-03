@@ -50,8 +50,7 @@ private:
 	BRICS_3D::Centroid3D centroid3DEstimator;
 
 	/**
-	 * Maximum number of object clusters which will be published. The first three object clusters
-	 * being detected will be published
+	 * Maximum number of object clusters which will be published.
 	 */
 	int maxNoOfObjects;
 

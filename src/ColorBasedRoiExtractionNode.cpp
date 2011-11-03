@@ -48,7 +48,7 @@ void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 
 int main(int argc, char* argv[]){
 
-	ros::init(argc, argv, "colorBasedRoiExtractor");
+	ros::init(argc, argv, "ColorBasedRoiExtractor");
 	ros::NodeHandle nh;
 
 	if(argc < 2){

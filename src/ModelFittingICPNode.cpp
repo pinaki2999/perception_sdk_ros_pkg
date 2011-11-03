@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
 	int maxNoOfObjects;
 	int noOfRegions;
 
-	ros::init(argc, argv, "modelFittingICP");
+	ros::init(argc, argv, "ModelFittingICP");
 	ros::NodeHandle nh;
 
 	if(argc == 2){
