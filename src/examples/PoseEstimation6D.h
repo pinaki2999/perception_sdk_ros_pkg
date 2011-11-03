@@ -16,10 +16,12 @@
 #include "algorithm/filtering/ColorBasedROIExtractorHSV.h"
 #include "util/PCLTypecaster.h"
 #include "core/ColoredPointCloud3D.h"
+#include "EuclideanClustering.h"
+#include "algorithm/featureExtraction/Centroid3D.h"
 
 //standard headers
 #include <iostream>
-
+#include <vector>
 namespace BRICS_3D {
 
 class PoseEstimation6D {
@@ -42,12 +44,23 @@ class PoseEstimation6D {
 	/**
 	 * Utility object for type-casting data between BRICS_3D and PCL
 	 */
-	BRICS_3D::PCLTypecaster pclTypeCaster;
+	BRICS_3D::PCLTypecaster pclTypecaster;
 
 	/**
 	 * Indicates if the color based ROI extractor is intialized with proper limits
 	 */
 	bool initializedRoiExtractor;
+
+	/**
+	 * Object for extracting euclidean clusters
+	 */
+	BRICS_3D::SDK::EuclideanClustering euclideanClusterExtractor;
+
+	/**
+	 * Object for estimating 3D centroids of the estimated object clusters
+	 */
+	BRICS_3D::Centroid3D centroid3DEstimator;
+
 
 public:
 	PoseEstimation6D();
@@ -71,6 +84,8 @@ public:
 	 *
 	 */
 	void initializeLimits(float minLimitH, float maxLimitH, float minLimitS, float maxLimitS);
+
+	void initializeClusterExtractor(int minClusterSize, int maxClusterSize, float clusterTolerance);
 
 
 	std::string getRegionLabel() const;

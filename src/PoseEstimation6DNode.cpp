@@ -38,7 +38,7 @@ int noOfRegions;
 void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 	if(!perceptionPaused){
 		for(int i=0; i<noOfRegions;i++){
-//			ROS_INFO("received a kinect message...");
+			//			ROS_INFO("received a kinect message...");
 			poseEstimators[i]->kinectCloudCallback(cloud);
 		}
 	} else {
@@ -76,9 +76,9 @@ int main(int argc, char* argv[]){
 		exit(0);
 	} else if(argc != (3+ 2*atoi(argv[1]))){
 		ROS_ERROR("Not enough arguments:\n Usage:\t "
-						"rosrun colorBasedRoiExtractor <no_of_regions> <maxNoOfObjects> <region_1_config_file> "
-						"<region_2_config_file>.... <region_label_1> <region_label_2>");
-				exit(0);
+				"rosrun colorBasedRoiExtractor <no_of_regions> <maxNoOfObjects> <region_1_config_file> "
+				"<region_2_config_file>.... <region_label_1> <region_label_2>");
+		exit(0);
 	}
 	noOfRegions = atoi(argv[1]);
 	maxNoOfObjects = atoi(argv[2]);
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]){
 
 	//define the HSV limit variables;
 	float minLimitH[noOfRegions], minLimitS[noOfRegions],
-			maxLimitH[noOfRegions], maxLimitS[noOfRegions];
+	maxLimitH[noOfRegions], maxLimitS[noOfRegions];
 
 	//parse the configuration files and set up the HSV limits and set up the pose estimators
 	std::ifstream configFileStream;
@@ -97,35 +97,41 @@ int main(int argc, char* argv[]){
 		poseEstimators.push_back(new BRICS_3D::PoseEstimation6D());
 
 		configFileStream.open(argv[i+3]);
-		      if ( configFileStream.is_open() ) {     //if file exists
-		          std::string s;
-		          while(getline(configFileStream, s)){    //extract the values of the parameters
-		              	std::vector< std::string > tempVec;
-		                  boost::split(tempVec, s, boost::is_any_of("="));
-		                  if(!tempVec[0].compare("minH")) {
-		                       minLimitH[i] = atof(tempVec[1].c_str());
-		                  } else if(!tempVec[0].compare("maxH")) {
-		                       maxLimitH[i] = atof(tempVec[1].c_str());
-		                  } else if(!tempVec[0].compare("minS")) {
-		                       minLimitS[i] = atof(tempVec[1].c_str());
-		                  } else if(!tempVec[0].compare("maxS")) {
-		                       maxLimitS[i] = atof(tempVec[1].c_str());
-		                  }
-		          }
-		          configFileStream.close();
-		      } else {
-		    	  ROS_ERROR("Configuration file: %s not found!!", argv[i+3]);
-		    	  exit(0);
-		      }
+		if ( configFileStream.is_open() ) {     //if file exists
+			std::string s;
+			while(getline(configFileStream, s)){    //extract the values of the parameters
+				std::vector< std::string > tempVec;
+				boost::split(tempVec, s, boost::is_any_of("="));
+				if(!tempVec[0].compare("minH")) {
+					minLimitH[i] = atof(tempVec[1].c_str());
+				} else if(!tempVec[0].compare("maxH")) {
+					maxLimitH[i] = atof(tempVec[1].c_str());
+				} else if(!tempVec[0].compare("minS")) {
+					minLimitS[i] = atof(tempVec[1].c_str());
+				} else if(!tempVec[0].compare("maxS")) {
+					maxLimitS[i] = atof(tempVec[1].c_str());
+				}
+			}
+			configFileStream.close();
+		} else {
+			ROS_ERROR("Configuration file: %s not found!!", argv[i+3]);
+			exit(0);
+		}
 
+		//Setting the max-no of objects to be searched for
+		poseEstimators[i]->setMaxNoOfObjects(maxNoOfObjects);
+		//Setting the label which will be used to publish the transforms
 		poseEstimators[i]->setRegionLabel(argv[3+noOfRegions+i]);
+		//Initializing the limits in HSV space to extract the ROI
 		poseEstimators[i]->initializeLimits(minLimitH[i], maxLimitH[i], minLimitS[i], maxLimitS[i]);
+		//Initializing the cluster extractor limits
+		poseEstimators[i]->initializeClusterExtractor(200,10000,0.01);
 	}
 
 
 	//subscribe to perception engine control messsage
 	ros::Subscriber  perceptionControlSubscriber;
-		perceptionControlSubscriber= nh.subscribe("/perceptionControl", 1,&perceptionControlCallback);
+	perceptionControlSubscriber= nh.subscribe("/perceptionControl", 1,&perceptionControlCallback);
 
 	//subscribe to kinect point cloud messages
 	ros::Subscriber  kinectCloudSubscriber[noOfRegions];

@@ -54,13 +54,13 @@ public:
 	void extractClusters(BRICS_3D::PointCloud3D *inCloud, std::vector<BRICS_3D::PointCloud3D*> *extractedClusters);
 
 
-	/**
-	 * Takes a pointcloud and returns an array of pointcloud that make up the clusters.
-	 * The clusters are defined by the parameters being set
-	 * @param inCloud	Input point cloud
-	 * @param extractedClusters Vector of pointcluds containing the extracted clusters
-	 */
-	void extractClusters(BRICS_3D::ColoredPointCloud3D *inCloud, std::vector<BRICS_3D::ColoredPointCloud3D*> *extractedClusters);
+//	/**
+//	 * Takes a pointcloud and returns an array of pointcloud that make up the clusters.
+//	 * The clusters are defined by the parameters being set
+//	 * @param inCloud	Input point cloud
+//	 * @param extractedClusters Vector of pointcluds containing the extracted clusters
+//	 */
+//	void extractClusters(BRICS_3D::ColoredPointCloud3D *inCloud, std::vector<BRICS_3D::ColoredPointCloud3D*> *extractedClusters);
 
 
 	/**
