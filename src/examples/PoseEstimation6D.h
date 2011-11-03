@@ -13,6 +13,10 @@
 #include "sensor_msgs/point_cloud_conversion.h"
 
 
+#include "algorithm/filtering/ColorBasedROIExtractorHSV.h"
+#include "util/PCLTypecaster.h"
+#include "core/ColoredPointCloud3D.h"
+
 //standard headers
 #include <iostream>
 
@@ -25,7 +29,25 @@ class PoseEstimation6D {
 	 */
 	int maxNoOfObjects;
 
+	/**
+	 * The label that will be used to publish the transforms
+	 */
+	std::string regionLabel;
 
+	/**
+	 * object for extracting ROIs based on HSV-color space limits
+	 */
+	BRICS_3D::ColorBasedROIExtractorHSV hsvBasedRoiExtractor;
+
+	/**
+	 * Utility object for type-casting data between BRICS_3D and PCL
+	 */
+	BRICS_3D::PCLTypecaster pclTypeCaster;
+
+	/**
+	 * Indicates if the color based ROI extractor is intialized with proper limits
+	 */
+	bool initializedRoiExtractor;
 
 public:
 	PoseEstimation6D();
@@ -38,6 +60,21 @@ public:
 	 * @param cloud input cloud from Kinect
 	 */
 	void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud);
+
+
+	/**
+	 * Initializes the HSV color-space based ROI extractor with Hue ans Saturation limits
+	 * @param minLimitH	minimum Hue value
+	 * @param maxLimitH maximum Hue value
+	 * @param minLimitS minimum saturation value
+	 * @param maxLimitS maximum saturation value
+	 *
+	 */
+	void initializeLimits(float minLimitH, float maxLimitH, float minLimitS, float maxLimitS);
+
+
+	std::string getRegionLabel() const;
+    void setRegionLabel(std::string regionLabel);
 };
 
 }
