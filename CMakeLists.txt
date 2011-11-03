@@ -57,15 +57,15 @@ rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.c
 target_link_libraries(objectClusterExtractor   
 										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
 
+#executable for Model Fitting using ICP
+rosbuild_add_executable(modelFittingICP src/ModelFittingICPNode.cpp 
+						src/examples/ModelFitting lib/IterativeClosestPoint)
+target_link_libraries(modelFittingICP   
+										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)										
+
 										
 #executable for 6D Pose Estimation
-rosbuild_add_executable(gopalPoseEstimator6D src/PoseEstimation6DNode.cpp 
-						src/examples/PoseEstimation6DExample lib/PoseEstimationICP)
-target_link_libraries(gopalPoseEstimator6D   
-										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
-
-#rosbuild_add_executable(gopalPoseEstimator6D src/PoseEstimation6DNode.cpp 
-#						src/examples/PoseEstimation6DExample_PCL)
-#target_link_libraries(gopalPoseEstimator6D   
-#										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
-										
+#rosbuild_add_executable(poseEstimator6D src/PoseEstimation6DNode.cpp 
+#						src/examples/PoseEstimation6DExample lib/PoseEstimationICP)
+#target_link_libraries(poseEstimator6D   
+#										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)										

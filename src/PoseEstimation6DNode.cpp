@@ -29,13 +29,6 @@
 //global variables
 
 
-//void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
-//	for(int i=0; i<noOfRegions;i++){
-//		ROS_INFO("received a kinect message...");
-//		objectClusterExtractor[i].kinectCloudCallback(cloud);
-//	}
-//}
-
 int main(int argc, char* argv[]){
 
 
