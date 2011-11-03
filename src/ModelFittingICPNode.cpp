@@ -25,23 +25,13 @@
 
 
 
-//global variables
-
-
-//void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
-//	for(int i=0; i<noOfRegions;i++){
-//		ROS_INFO("received a kinect message...");
-//		objectClusterExtractor[i].kinectCloudCallback(cloud);
-//	}
-//}
-
 int main(int argc, char* argv[]){
 
 
 	int maxNoOfObjects;
 	int noOfRegions;
 
-	ros::init(argc, argv, "poseEstimator6D");
+	ros::init(argc, argv, "modelFittingICP");
 	ros::NodeHandle nh;
 
 	if(argc == 2){
@@ -79,7 +69,6 @@ int main(int argc, char* argv[]){
 	}
 
 	//subscribe to kinect point cloud messages
-
 	ros::Subscriber  objectClusterSubscriber[noOfRegions*maxNoOfObjects];
 	int count = 0;
     for (int i = 0; i < noOfRegions ; i++){
