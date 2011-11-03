@@ -40,47 +40,38 @@ ModelFitting::ModelFitting() {
 }
 
 ModelFitting::~ModelFitting() {
-	// TODO Auto-generated destructor stub
 	delete cube2D;
 	delete cube3D;
 }
 
 void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 
-	ROS_INFO("Looking For: %s ", modelPublisher->getTopic().c_str());
 	//Transforming Input message to BRICS_3D format
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz_ptr(new pcl::PointCloud<pcl::PointXYZ>());
 	pcl::PointCloud<pcl::PointXYZ>::Ptr estimated_model_ptr(new pcl::PointCloud<pcl::PointXYZ>());
 
 	BRICS_3D::PointCloud3D *in_cloud = new BRICS_3D::PointCloud3D();
+	BRICS_3D::PointCloud3D *finalModel2D = new BRICS_3D::PointCloud3D();
+	BRICS_3D::PointCloud3D *finalModel3D = new BRICS_3D::PointCloud3D();
+	BRICS_3D::PointCloud3D *transformedCubeModel2D = new BRICS_3D::PointCloud3D();
+	BRICS_3D::PointCloud3D *transformedCubeModel3D = new BRICS_3D::PointCloud3D();
+	BRICS_3D::Centroid3D centroidEstimator;
 
 	//Transform sensor_msgs::PointCloud2 msg to pcl::PointCloud
 	pcl::fromROSMsg (cloud, *cloud_xyz_ptr);
 
 	// cast PCL to BRICS_3D type
 	pclTypecaster.convertToBRICS3DDataType(cloud_xyz_ptr, in_cloud);
-	ROS_INFO("Size of input cloud: %d ", in_cloud->getSize());
+//	ROS_INFO("Size of input cloud: %d ", in_cloud->getSize());
 
-
-	//=============================================================================================
-	BRICS_3D::PointCloud3D *finalModel2D = new BRICS_3D::PointCloud3D();
-	BRICS_3D::PointCloud3D *finalModel3D = new BRICS_3D::PointCloud3D();
-	BRICS_3D::PointCloud3D *transformedCubeModel2D = new BRICS_3D::PointCloud3D();
-	BRICS_3D::PointCloud3D *transformedCubeModel3D = new BRICS_3D::PointCloud3D();
-
-	BRICS_3D::Centroid3D centroidEstimator;
 	Eigen::Vector3d centroid3d = centroidEstimator.computeCentroid(in_cloud);
 	float xTrans = centroid3d[0];
 	float yTrans = centroid3d[1];
 	float zTrans = centroid3d[2];
 
-	ROS_INFO("Initial estimate \n\tTranslation-[x,y,z,]=[%f,%f,%f]",xTrans, yTrans, zTrans);
+//	ROS_INFO("Initial estimate \n\tTranslation-[x,y,z,]=[%f,%f,%f]",xTrans, yTrans, zTrans);
 
-
-
-	/**Translate the cube models which will be our initial estimate for ICP*/
-
-
+	//Translate the cube models which will be our initial estimate for ICP
 	Eigen::Matrix4f  tempHomogenousMatrix;
 	calculateHomogeneousMatrix(0,0,0,xTrans,yTrans,zTrans,tempHomogenousMatrix,true);
 	BRICS_3D::HomogeneousMatrix44* homogeneousTrans = new HomogeneousMatrix44(
@@ -108,8 +99,6 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 	}
 	ROS_INFO("Resultant cloud size: %d", transformedCubeModel3D->getSize());
 	transformedCubeModel3D->homogeneousTransformation(homogeneousTrans);
-
-
 
 	//Performing 2D model alignment
 	poseEstimatorICP.setDistance(0.1);
@@ -150,13 +139,11 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
 		ROS_INFO("Best score found by 3D model : %f", score3D);
 		bestScore=score3D;
-
 	}
 
 	ROS_INFO("Resultant cloud size: %d", transformedCubeModel3D->getSize());
 	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
 	modelPublisher->publish(*estimated_model_ptr);
-
 
 	delete in_cloud;
 	delete finalModel2D;

@@ -18,9 +18,7 @@ IterativeClosestPoint::IterativeClosestPoint() {
 }
 
 
-IterativeClosestPoint::~IterativeClosestPoint() {
-	// TODO Auto-generated destructor stub
-}
+IterativeClosestPoint::~IterativeClosestPoint() {}
 
 
 void IterativeClosestPoint::estimateBestFit(BRICS_3D::PointCloud3D *inCloud, BRICS_3D::PointCloud3D *outCloud){
@@ -29,46 +27,41 @@ void IterativeClosestPoint::estimateBestFit(BRICS_3D::PointCloud3D *inCloud, BRI
 	BRICS_3D::PCLTypecaster pclTypecaster;
 
 	pcl::IterativeClosestPointNonLinear<pcl::PointXYZ, pcl::PointXYZ> icp;
-    pcl::PointCloud<pcl::PointXYZ>::Ptr objectModelPtr(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::PointCloud<pcl::PointXYZ> Final;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr objectModelPtr(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PointCloud<pcl::PointXYZ> Final;
 
-    pclTypecaster.convertToPCLDataType(targetCloudPtr, inCloud);
-//    std::cout << "object model cloud size: " << objectModel->getSize()<< std::endl;
-    pclTypecaster.convertToPCLDataType(objectModelPtr, objectModel);
+	pclTypecaster.convertToPCLDataType(targetCloudPtr, inCloud);
+	//    std::cout << "object model cloud size: " << objectModel->getSize()<< std::endl;
+	pclTypecaster.convertToPCLDataType(objectModelPtr, objectModel);
 
-     icp.setInputCloud(objectModelPtr);
-     icp.setInputTarget(targetCloudPtr);
-     icp.setMaxCorrespondenceDistance(distance);
-     icp.setTransformationEpsilon (transformationEpsilon);
-     icp.setMaximumIterations (maxIterations);
-
-
-
-     int count=0;
-     float scoreEpsilon = 0.000008;
-     while( (count<10) & (icp.getFitnessScore() > scoreEpsilon) ) {
-    	 icp.align(Final);
-    	 count++;
-     }
+	icp.setInputCloud(objectModelPtr);
+	icp.setInputTarget(targetCloudPtr);
+	icp.setMaxCorrespondenceDistance(distance);
+	icp.setTransformationEpsilon (transformationEpsilon);
+	icp.setMaximumIterations (maxIterations);
 
 
-     this->fitnessScore=icp.getFitnessScore();
-     this->finalTransformation = icp.getFinalTransformation();
 
-     //Fixme if required ,)
+	int count=0;
+	float scoreEpsilon = 0.000008;
+	while( (count<10) & (icp.getFitnessScore() > scoreEpsilon) ) {
+		icp.align(Final);
+		count++;
+	}
+	this->fitnessScore=icp.getFitnessScore();
+	this->finalTransformation = icp.getFinalTransformation();
 
 
-     pcl::PointCloud<pcl::PointXYZ> ::Ptr FinalCloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
-     FinalCloudPtr->width = Final.width;
-     FinalCloudPtr->height = Final.height;
-     FinalCloudPtr->points.resize(Final.height * Final.width);
-     for (size_t i = 0; i<FinalCloudPtr->size(); i++){
-    	 FinalCloudPtr->points[i].x = Final.points[i].x;
-    	 FinalCloudPtr->points[i].y = Final.points[i].y;
-    	 FinalCloudPtr->points[i].z = Final.points[i].z;
-     }
-
-     pclTypecaster.convertToBRICS3DDataType(FinalCloudPtr, outCloud);
+	pcl::PointCloud<pcl::PointXYZ> ::Ptr FinalCloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
+	FinalCloudPtr->width = Final.width;
+	FinalCloudPtr->height = Final.height;
+	FinalCloudPtr->points.resize(Final.height * Final.width);
+	for (size_t i = 0; i<FinalCloudPtr->size(); i++){
+		FinalCloudPtr->points[i].x = Final.points[i].x;
+		FinalCloudPtr->points[i].y = Final.points[i].y;
+		FinalCloudPtr->points[i].z = Final.points[i].z;
+	}
+	pclTypecaster.convertToBRICS3DDataType(FinalCloudPtr, outCloud);
 
 
 }

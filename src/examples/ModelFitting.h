@@ -8,11 +8,13 @@
 #ifndef POSEESTIMATION6DEXAMPLE_H_
 #define POSEESTIMATION6DEXAMPLE_H_
 
+//ros-headers
 #include "sensor_msgs/PointCloud2.h"
 #include "sensor_msgs/point_cloud_conversion.h"
 #include "ros/publisher.h"
 #include "pcl_ros/point_cloud.h"
 
+//BRICS_3D headers
 #include "IterativeClosestPoint.h"
 #include "util/SimplePointCloudGeneratorCube.h"
 #include "util/PCLTypecaster.h"
@@ -20,10 +22,12 @@
 #include "algorithm/featureExtraction/Centroid3D.h"
 #include "core/HomogeneousMatrix44.h"
 
+//PCL Headers
 #include <pcl/registration/icp.h>
 #include <pcl/registration/icp_nl.h>
 #include <pcl/registration/registration.h>
 #include <pcl/common/transform.h>
+
 
 #include <Eigen/Geometry>
 
@@ -32,22 +36,58 @@ namespace BRICS_3D {
 
 class ModelFitting {
 
+	/**
+	 * Object for performing ICP
+	 */
 	BRICS_3D::SDK::IterativeClosestPoint poseEstimatorICP;
 
+	/**
+	 * two-sided cube model
+	 */
 	BRICS_3D::PointCloud3D *cube2D;
+
+	/**
+	 * Three sided cube model
+	 */
 	BRICS_3D::PointCloud3D *cube3D;
 
+	/**
+	 * Object to create the cube models
+	 */
 	BRICS_3D::SimplePointCloudGeneratorCube cubeModelGenerator;
 
+	/**
+	 * Object to typecast data-types between PCL and BRICS_3D
+	 */
 	BRICS_3D::PCLTypecaster pclTypecaster;
 
+	/**
+	 * Fitting score threshold indicating a good match
+	 */
 	float reliableScoreThreshold;
 
+	/**
+	 * Publisher to output the fitted models
+	 */
 	ros::Publisher *modelPublisher;
 
+	/**
+	 * Best score found till now
+	 */
 	float bestScore;
 
 
+	/**
+	 * Helper function to calculate a homogeneous matrix for affine-transformation
+	 * @param xRot		Rotation along x-axis
+	 * @param yRot		Rotation along y-axis
+	 * @param zRot		Rotation along z-axis
+	 * @param xtrans	Translation along x-axis
+	 * @param ytrans	Translation along y-axis
+	 * @param ztrans	Translation along z-axis
+	 * @param homogeneousMatrix	Output matrix
+	 * @param inDegrees	Indicates whether the rotation angles are in degree(1) or radian(0)
+	 */
 	void calculateHomogeneousMatrix(float xRot,float yRot,
 			float zRot, float xtrans, float ytrans, float ztrans, Eigen::Matrix4f  &homogeneousMatrix, bool inDegrees){
 		if(inDegrees){
@@ -92,15 +132,24 @@ class ModelFitting {
 	}
 
 public:
+
 	ModelFitting();
 	virtual ~ModelFitting();
+
+	/**
+	 * Callback module to accept the input cloud
+	 * @param cloud	input cloud
+	 */
 	void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud);
 
+
+	/**
+	 *	Set the publishers
+	 * @param pub	Array of ROS::Publishers to which the fitted models will be published
+	 */
 	void setModelPublisher(ros::Publisher *pub){
 		this->modelPublisher = pub;
 	}
-
-
 
 };
 
