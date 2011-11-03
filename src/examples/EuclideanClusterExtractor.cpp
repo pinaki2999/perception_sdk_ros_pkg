@@ -60,7 +60,7 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     //Publish the extracted clusters
 	pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZ>());
 	int regions;
-	if(extracted_clusters.size() < maxNoOfObjects) {
+	if(extracted_clusters.size() < abs(maxNoOfObjects)) {
 		regions = extracted_clusters.size();
 	} else {
 		regions = maxNoOfObjects;

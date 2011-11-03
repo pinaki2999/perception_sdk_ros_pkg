@@ -21,10 +21,12 @@
 #include "core/HomogeneousMatrix44.h"
 #include "util/SimplePointCloudGeneratorCube.h"
 #include "IterativeClosestPoint.h"
+#include <tf/transform_broadcaster.h>
 
 //standard headers
 #include <iostream>
 #include <vector>
+#include <Eigen/StdVector>
 namespace BRICS_3D {
 
 class PoseEstimation6D {
@@ -62,7 +64,7 @@ class PoseEstimation6D {
 	/**
 	 * Object for estimating 3D centroids of the estimated object clusters
 	 */
-	BRICS_3D::Centroid3D centroid3DEstimator;
+	BRICS_3D::Centroid3D *centroid3DEstimator;
 
 	/**
 	 * two-sided cube model
@@ -88,13 +90,25 @@ class PoseEstimation6D {
 	/**
 	 * Best score found till now
 	 */
-	float bestScore;
+	std::vector<float> bestScore;
 
 	/**
 	 * Object for performing ICP
 	 */
 	BRICS_3D::SDK::IterativeClosestPoint *poseEstimatorICP;
 
+
+	/**
+	 * Best translation found   by the model fitting process
+	 */
+	std::vector<float> xtranslation;
+	std::vector<float> ytranslation;
+	std::vector<float> ztranslation;
+
+	/**
+	 * Best transformation found by the model fitting process
+	 */
+	std::vector<Eigen::Matrix4f*> bestTransformation;
 
 	/**
 	 * Helper function to calculate a homogeneous matrix for affine-transformation
@@ -151,6 +165,9 @@ class PoseEstimation6D {
 	}
 
 public:
+
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	PoseEstimation6D();
 	virtual ~PoseEstimation6D();
     int getMaxNoOfObjects() const;

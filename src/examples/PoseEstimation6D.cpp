@@ -49,8 +49,33 @@ PoseEstimation6D::PoseEstimation6D() {
 
 	ROS_INFO("Initialization Done....");
 	reliableScoreThreshold = 0.00008;
-	bestScore = 1000;
+
 	maxNoOfObjects = 0;
+
+
+	//ToDO initialize
+//	bestTransformation[0]=0;
+//	bestTransformation[1]=0;
+//	bestTransformation[2]=0;
+//	bestTransformation[3]=0;
+//	bestTransformation[4]=0;
+//	bestTransformation[5]=0;
+//	bestTransformation[6]=0;
+//	bestTransformation[7]=0;
+//	bestTransformation[8]=0;
+//	bestTransformation[9]=0;
+//	bestTransformation[10]=0;
+//	bestTransformation[11]=0;
+//	bestTransformation[12]=0;
+//	bestTransformation[13]=0;
+//	bestTransformation[14]=0;
+//	bestTransformation[15]=0;
+
+//	translation[0] = 0;
+//	translation[1] = 0;
+//	translation[2] = 0;
+
+	centroid3DEstimator =  new BRICS_3D::Centroid3D();
 
 }
 
@@ -72,12 +97,23 @@ void PoseEstimation6D::setRegionLabel(std::string regionLabel)
 void PoseEstimation6D::setMaxNoOfObjects(int maxNoOfObjects)
 {
 	this->maxNoOfObjects = maxNoOfObjects;
+
+	int i;
+	for (i = 0; i < maxNoOfObjects; ++i) {
+		bestScore.push_back(1000);
+		xtranslation.push_back(0);
+		ytranslation.push_back(0);
+		ztranslation.push_back(0);
+		bestTransformation.push_back(new Eigen::Matrix4f());
+	}
+
 }
 
 PoseEstimation6D::~PoseEstimation6D() {
 	delete cube2D;
 	delete cube3D;
 	delete poseEstimatorICP;
+	delete centroid3DEstimator;
 }
 
 void PoseEstimation6D::initializeLimits(float minLimitH, float maxLimitH, float minLimitS,
@@ -98,7 +134,7 @@ void PoseEstimation6D::initializeClusterExtractor(int minClusterSize, int maxClu
 
 void PoseEstimation6D::estimatePose(BRICS_3D::PointCloud3D *in_cloud, int objCount){
 
-	Eigen::Vector3d centroid3d = centroid3DEstimator.computeCentroid(in_cloud);
+	Eigen::Vector3d centroid3d = centroid3DEstimator->computeCentroid(in_cloud);
 	float xTrans = centroid3d[0];
 	float yTrans = centroid3d[1];
 	float zTrans = centroid3d[2];
@@ -146,39 +182,69 @@ void PoseEstimation6D::estimatePose(BRICS_3D::PointCloud3D *in_cloud, int objCou
 	poseEstimatorICP->setObjectModel(transformedCubeModel2D);
 	poseEstimatorICP->estimateBestFit(in_cloud, finalModel2D);
 	float score2D = poseEstimatorICP->getFitnessScore();
+	Eigen::Matrix4f transformation2D = poseEstimatorICP->getFinalTransformation();
 
 	//Performing 3D model alignment
 	poseEstimatorICP->setObjectModel(transformedCubeModel3D);
 	poseEstimatorICP->estimateBestFit(in_cloud, finalModel3D);
 	float score3D = poseEstimatorICP->getFitnessScore();
+	Eigen::Matrix4f transformation3D = poseEstimatorICP->getFinalTransformation();
 
 	if(score2D<score3D){
 		//publish model estimated using two sided cube
-		if(score2D < bestScore){
+		if(score2D < bestScore[objCount]){
 			if(score2D > reliableScoreThreshold){
 				ROS_INFO("[%s_%d] Approximate Model Found(2D)!! Object May Not be visible enough...",
 						regionLabel.c_str(),objCount);
 			} else {
 				ROS_INFO("[%s_%d] Reliable Model Found(2D) :) ", regionLabel.c_str(), objCount);
 			}
+			*(bestTransformation[objCount]) = transformation2D;
+			centroid3d = centroid3DEstimator->computeCentroid(finalModel2D);
+			xtranslation[objCount]=centroid3d[0];
+			ytranslation[objCount]=centroid3d[1];
+			ztranslation[objCount]=centroid3d[2];
 		}
 		ROS_INFO("[%s_%d] Best score found by 2D model : %f", regionLabel.c_str(), objCount,score2D);
-		bestScore = score2D;
+		bestScore[objCount] = score2D;
 
 	} else {
 		//publish model estimated using three sided cube
-		if(score3D<bestScore){
+		if(score3D<bestScore[objCount]){
 			if(score3D > reliableScoreThreshold){
 				ROS_INFO("[%s_%d] Approximate Model Found(3D)!! Object May Not be visible enough...",
 						regionLabel.c_str(),objCount);
 			}else {
 				ROS_INFO("[%s_%d] Reliable Model Found(3D) :) ", regionLabel.c_str(), objCount);
 			}
+			*(bestTransformation[objCount]) = transformation3D;
+			centroid3d = centroid3DEstimator->computeCentroid(finalModel3D);
+			xtranslation[objCount]=centroid3d[0];
+			ytranslation[objCount]=centroid3d[1];
+			ztranslation[objCount]=centroid3d[2];
+
 		}
 		ROS_INFO("[%s_%d] Best score found by 3D model : %f", regionLabel.c_str(), objCount, score3D);
-		bestScore=score3D;
+		bestScore[objCount]=score3D;
 	}
 
+
+    double yRot = asin (-(*(bestTransformation[objCount]))[2]);
+    double xRot = asin ((*(bestTransformation[objCount]))[6]/cos(yRot));
+    double zRot = asin ((*(bestTransformation[objCount]))[1]/cos(yRot));
+
+//	Eigen::Matrix4f  tempHomogenousMatrix;
+//  calculateHomogeneousMatrix(xRot, yRot, zRot, translation[0], translation[1], translation[2],tempHomogenousMatrix,0);
+
+    static tf::TransformBroadcaster br;
+     tf::Transform transform;
+     transform.setOrigin( tf::Vector3(xtranslation[objCount], ytranslation[objCount], ztranslation[objCount]) );
+     //Todo stop using Quaternion
+     transform.setRotation( tf::Quaternion(xRot, yRot, zRot) );
+     std::stringstream ss;
+     ss << regionLabel << "_object_" << objCount;
+     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/openni_rgb_optical_frame",
+    		 ss.str()));
 
 	delete finalModel2D;
 	delete finalModel3D;
@@ -204,11 +270,12 @@ void PoseEstimation6D::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud
 	pclTypecaster.convertToBRICS3DDataType(cloud_xyz_rgb_ptr, in_cloud);
 	ROS_INFO("Size of input cloud: %d ", in_cloud->getSize());
 
+	if(in_cloud->getSize() < euclideanClusterExtractor.getMinClusterSize()) return;
 	/**==================================================================================================== [color based roi extraction]**/
 	//perform HSV color based extraction
 	hsvBasedRoiExtractor.extractColorBasedROI(in_cloud, color_based_roi);
 	ROS_INFO("[%s] Size of extracted cloud : %d ", regionLabel.c_str(),color_based_roi->getSize());
-
+	if(color_based_roi->getSize() < euclideanClusterExtractor.getMinClusterSize()) return;
 	/**==================================================================================================== [cluster extraction]**/
 	//extract the clusters
 	euclideanClusterExtractor.extractClusters(color_based_roi, &extracted_clusters);
