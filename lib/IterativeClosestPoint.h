@@ -57,6 +57,7 @@ private:
 	Eigen::Matrix4f finalTransformation;
 
 public:
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 	IterativeClosestPoint();
 	virtual ~IterativeClosestPoint();
 

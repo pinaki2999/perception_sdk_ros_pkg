@@ -18,6 +18,9 @@
 #include "core/ColoredPointCloud3D.h"
 #include "EuclideanClustering.h"
 #include "algorithm/featureExtraction/Centroid3D.h"
+#include "core/HomogeneousMatrix44.h"
+#include "util/SimplePointCloudGeneratorCube.h"
+#include "IterativeClosestPoint.h"
 
 //standard headers
 #include <iostream>
@@ -61,6 +64,91 @@ class PoseEstimation6D {
 	 */
 	BRICS_3D::Centroid3D centroid3DEstimator;
 
+	/**
+	 * two-sided cube model
+	 */
+	BRICS_3D::PointCloud3D *cube2D;
+
+	/**
+	 * Three sided cube model
+	 */
+	BRICS_3D::PointCloud3D *cube3D;
+
+	/**
+	 * Object to create the cube models
+	 */
+	BRICS_3D::SimplePointCloudGeneratorCube cubeModelGenerator;
+
+
+	/**
+	 * Fitting score threshold indicating a good match
+	 */
+	float reliableScoreThreshold;
+
+	/**
+	 * Best score found till now
+	 */
+	float bestScore;
+
+	/**
+	 * Object for performing ICP
+	 */
+	BRICS_3D::SDK::IterativeClosestPoint *poseEstimatorICP;
+
+
+	/**
+	 * Helper function to calculate a homogeneous matrix for affine-transformation
+	 * @param xRot		Rotation along x-axis
+	 * @param yRot		Rotation along y-axis
+	 * @param zRot		Rotation along z-axis
+	 * @param xtrans	Translation along x-axis
+	 * @param ytrans	Translation along y-axis
+	 * @param ztrans	Translation along z-axis
+	 * @param homogeneousMatrix	Output matrix
+	 * @param inDegrees	Indicates whether the rotation angles are in degree(1) or radian(0)
+	 */
+	void calculateHomogeneousMatrix(float xRot,float yRot,
+			float zRot, float xtrans, float ytrans, float ztrans, Eigen::Matrix4f  &homogeneousMatrix, bool inDegrees){
+		if(inDegrees){
+			float PI = 3.14159265;
+			xRot = xRot*(PI/180);
+			yRot *= yRot*(PI/180);
+			zRot *= zRot*(PI/180);
+		}
+		/*
+		 * layout:
+		 * 0 4 8  12
+		 * 1 5 9  13
+		 * 2 6 10 14
+		 * 3 7 11 15
+		 */
+
+
+		homogeneousMatrix[3]=0;
+		homogeneousMatrix[7]=0;
+		homogeneousMatrix[11]=0;
+		homogeneousMatrix[15]=1;
+
+	    //translation
+	    homogeneousMatrix[12]=xtrans;
+		homogeneousMatrix[13]=ytrans;
+		homogeneousMatrix[14]=ztrans;
+
+		//rotation
+		homogeneousMatrix[0] = cos(yRot)*cos(zRot);
+		homogeneousMatrix[1] = cos(yRot)*sin(zRot);
+		homogeneousMatrix[2] = -sin(yRot);
+
+		homogeneousMatrix[4] = -cos(xRot)*sin(zRot) + sin(xRot)*sin(yRot)*cos(zRot);
+		homogeneousMatrix[5] = cos(xRot)*cos(zRot) + sin(xRot)*sin(yRot)*sin(zRot);
+		homogeneousMatrix[6] = sin(xRot)*cos(yRot);
+
+		homogeneousMatrix[8] = sin(xRot)*sin(zRot) + cos(xRot)*sin(yRot)*cos(zRot);
+		homogeneousMatrix[9] = -sin(xRot)*cos(zRot) + cos(xRot)*sin(yRot)*sin(zRot);
+		homogeneousMatrix[10]= cos(xRot)*cos(yRot);
+
+
+	}
 
 public:
 	PoseEstimation6D();
@@ -87,6 +175,7 @@ public:
 
 	void initializeClusterExtractor(int minClusterSize, int maxClusterSize, float clusterTolerance);
 
+	void estimatePose(BRICS_3D::PointCloud3D *in_cloud, int objCount);
 
 	std::string getRegionLabel() const;
     void setRegionLabel(std::string regionLabel);
