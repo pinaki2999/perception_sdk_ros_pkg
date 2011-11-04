@@ -144,10 +144,11 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 			ytranslation=centroid3d[1];
 			ztranslation=centroid3d[2];
 			*bestTransformation = transformation2D;
+			bestScore = score2D;
 		}
-//		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel2D);
+		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel2D);
 		ROS_INFO("Best score found by 3D model : %f", score2D);
-		bestScore = score2D;
+
 
 	} else {
 		//publish model estimated using three sided cube
@@ -163,10 +164,11 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 			ytranslation=centroid3d[1];
 			ztranslation=centroid3d[2];
 			*bestTransformation = transformation3D;
+			bestScore=score3D;
 		}
-//		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
+		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
 		ROS_INFO("Best score found by 3D model : %f", score3D);
-		bestScore=score3D;
+
 	}
 
 
@@ -198,7 +200,7 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 			tempHomogenousMatrix[2], tempHomogenousMatrix[6], tempHomogenousMatrix[10],
 			xtranslation,ytranslation,ztranslation);
  	finalModel->homogeneousTransformation(homogeneousTrans);
- 	pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel);
+ //	pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel);
 	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
 	modelPublisher->publish(*estimated_model_ptr);
 

@@ -151,6 +151,8 @@ void PoseEstimation6D::estimatePose(BRICS_3D::PointCloud3D *in_cloud, int objCou
 	float yTrans = centroid3d[1];
 	float zTrans = centroid3d[2];
 
+
+
 	//	ROS_INFO("Initial estimate \n\tTranslation-[x,y,z,]=[%f,%f,%f]",xTrans, yTrans, zTrans);
 
 	//Translate the cube models which will be our initial estimate for ICP
