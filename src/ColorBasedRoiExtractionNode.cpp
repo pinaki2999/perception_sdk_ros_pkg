@@ -1,9 +1,21 @@
-/*
- * ColorBasedRoiExtractionNode.cpp
- *
- *  Created on: Oct 13, 2011
- *      Author: Pinaki Sunil Banerjee
- */
+/******************************************************************************
+* BRICS_3D - 3D Perception and Modeling Library
+* Copyright (c) 2011, GPS GmbH
+*
+* Author: Pinaki Sunil Banerjee
+*
+*
+* This software is published under a dual-license: GNU Lesser General Public
+* License LGPL 2.1 and Modified BSD license. The dual-license implies that
+* users of this code may choose which terms they prefer.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Lesser General Public License LGPL and the BSD license for
+* more details.
+*
+******************************************************************************/
 
 
 //ROS specific Headers
@@ -22,17 +34,6 @@
 #include <boost/algorithm/string.hpp>
 #include <stdlib.h>
 
-/**
- * usage: rosrun perception_sdk_ros_pkg colorBasedRoiExtractor <no_of_regions> <region_1_config_file> <region_2_config_file>....
- *
- * Parses HSV color limits from the configuration files for each region and publishes pointcloud
- * messages corresponding to each region
- *
- * Topic published:
- *  extracted_region_1, extracted_region_2 ......
- *  type: Pointcloud2 message
- *  frame_id: /openni_rgb_optical_frame
- */
 
 using namespace std;
 BRICS_3D::ColorBasedRoiExtractor *roiExtractor;

@@ -1,13 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
 
 rosbuild_init()
 
@@ -15,9 +8,10 @@ rosbuild_init()
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+#Set the path for external CMAKE modules
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/cmake_modules")
 
-
-
+FIND_PACKAGE(BRICS_3D REQUIRED)
 
 # add dynamic reconfigure api
 rosbuild_find_ros_package(dynamic_reconfigure)
@@ -31,13 +25,16 @@ ADD_DEFINITIONS(-DEIGEN3)
 
 # add library directories (-L)
 LINK_DIRECTORIES(
-    /home/pinaki/hack-arena/BRICS_3D/lib/
+#    ${BRICS_3D_ALGOTITHM_LIBRARY}
+#    ${BRICS_3D_CORE_LIBRARY}
+#    ${BRICS_3D_UTIL_LIBRARY}
+    ${BRICS_3D_LINK_DIRECTORIES}
+    
 )
 
 # add include directories (-I)
 INCLUDE_DIRECTORIES(
-     /home/pinaki/hack-arena/BRICS_3D/src
-     /home/pinaki/hack-arena/BRICS_3D/external
+	 ${BRICS_3D_INCLUDE_DIRS}
      ${PROJECT_SOURCE_DIR}/lib
 )
 
@@ -49,31 +46,31 @@ INCLUDE_DIRECTORIES(
 #executable for color based region of interest extraction
 rosbuild_add_executable(colorBasedRoiExtractor src/ColorBasedRoiExtractionNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(colorBasedRoiExtractor brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
+target_link_libraries(colorBasedRoiExtractor brics3d_util.a brics3d_algorithm brics3d_core)
 
 #executable for hsv configuration finder
 rosbuild_add_executable(hsvLimitsFinder src/HSVLimitsFinderNode.cpp 
 						src/examples/ColorBasedRoiExtractor)
-target_link_libraries(hsvLimitsFinder  brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core)
+target_link_libraries(hsvLimitsFinder  brics3d_util brics3d_algorithm brics3d_core)
 
 #executable for object cluster extraction
 rosbuild_add_executable(objectClusterExtractor src/ObjectClusterExtractionNode.cpp 
 						src/examples/EuclideanClusterExtractor lib/EuclideanClustering)
 target_link_libraries(objectClusterExtractor   
-										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
+										brics3d_util brics3d_algorithm brics3d_core)
 
 #executable for Model Fitting using ICP
 rosbuild_add_executable(modelFittingICP src/ModelFittingICPNode.cpp 
 						src/examples/ModelFitting lib/IterativeClosestPoint)
 target_link_libraries(modelFittingICP   
-										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)										
+										brics3d_util brics3d_algorithm brics3d_core)										
 
 										
 #executable for 6D Pose Estimation
 rosbuild_add_executable(poseEstimator6D src/PoseEstimation6DNode.cpp 
 						src/examples/PoseEstimation6D lib/IterativeClosestPoint lib/EuclideanClustering)
 target_link_libraries(poseEstimator6D   
-										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
+										brics3d_util brics3d_algorithm brics3d_core)
 										
 #executable for controlling the perception system
 rosbuild_add_executable(perceptionEngineController src/ControlPerception.cpp)
