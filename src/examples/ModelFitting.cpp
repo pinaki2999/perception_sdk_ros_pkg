@@ -27,7 +27,7 @@ ModelFitting::ModelFitting() {
 	cube3D = new BRICS_3D::PointCloud3D();
 
 	cubeModelGenerator.setPointsOnEachSide(5);
-	cubeModelGenerator.setCubeSideLength(0.06);
+	cubeModelGenerator.setCubeSideLength(0.057);
 
 	cubeModelGenerator.setNumOfFaces(2);
 	cubeModelGenerator.generatePointCloud(cube2D);
@@ -61,6 +61,7 @@ ModelFitting::~ModelFitting() {
 
 void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 
+	bestTransformation = new Eigen::Matrix4f();
 	//Transforming Input message to BRICS_3D format
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz_ptr(new pcl::PointCloud<pcl::PointXYZ>());
 	pcl::PointCloud<pcl::PointXYZ>::Ptr estimated_model_ptr(new pcl::PointCloud<pcl::PointXYZ>());
@@ -121,11 +122,13 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 	poseEstimatorICP->setObjectModel(transformedCubeModel2D);
 	poseEstimatorICP->estimateBestFit(in_cloud, finalModel2D);
 	float score2D = poseEstimatorICP->getFitnessScore();
+	Eigen::Matrix4f transformation2D=poseEstimatorICP->getFinalTransformation();
 
 	//Performing 3D model alignment
 	poseEstimatorICP->setObjectModel(transformedCubeModel3D);
 	poseEstimatorICP->estimateBestFit(in_cloud, finalModel3D);
 	float score3D = poseEstimatorICP->getFitnessScore();
+	Eigen::Matrix4f transformation3D=poseEstimatorICP->getFinalTransformation();
 
 	if(score2D<score3D){
 		//publish model estimated using two sided cube
@@ -136,8 +139,13 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 			} else {
 				ROS_INFO("[%s] Reliable Model Found(2D) :) ", modelPublisher->getTopic().c_str());
 			}
+			centroid3d = centroidEstimator.computeCentroid(finalModel2D);
+			xtranslation=centroid3d[0];
+			ytranslation=centroid3d[1];
+			ztranslation=centroid3d[2];
+			*bestTransformation = transformation2D;
 		}
-		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel2D);
+//		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel2D);
 		ROS_INFO("Best score found by 3D model : %f", score2D);
 		bestScore = score2D;
 
@@ -150,20 +158,57 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 			}else {
 				ROS_INFO("[%s] Reliable Model Found(3D) :) ", modelPublisher->getTopic().c_str());
 			}
+			centroid3d = centroidEstimator.computeCentroid(finalModel2D);
+			xtranslation=centroid3d[0];
+			ytranslation=centroid3d[1];
+			ztranslation=centroid3d[2];
+			*bestTransformation = transformation3D;
 		}
-		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
+//		pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel3D);
 		ROS_INFO("Best score found by 3D model : %f", score3D);
 		bestScore=score3D;
 	}
 
-	ROS_INFO("Resultant cloud size: %d", transformedCubeModel3D->getSize());
+
+    double yRot = asin (-(*(bestTransformation))[2]);
+    double xRot = asin ((*(bestTransformation))[6]/cos(yRot));
+    double zRot = asin ((*(bestTransformation))[1]/cos(yRot));
+
+    static tf::TransformBroadcaster br;
+     tf::Transform transform;
+     transform.setOrigin( tf::Vector3(xtranslation, ytranslation, ztranslation) );
+     //Todo stop using Quaternion
+     transform.setRotation( tf::Quaternion(xRot, yRot, zRot) );
+     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/openni_rgb_optical_frame",
+    		 modelPublisher->getTopic()));
+
+     calculateHomogeneousMatrix(xRot,yRot,zRot,xtranslation,ytranslation,ztranslation,tempHomogenousMatrix,0);
+     BRICS_3D::PointCloud3D *finalModel = new BRICS_3D::PointCloud3D();
+ 	for(unsigned int i=0; i<cube3D->getSize();i++){
+ 		BRICS_3D::Point3D *tempPoint = new BRICS_3D::Point3D(cube3D->getPointCloud()->data()[i].getX(),
+ 				cube3D->getPointCloud()->data()[i].getY(),
+ 				cube3D->getPointCloud()->data()[i].getZ());
+ 		finalModel->addPoint(tempPoint);
+ 		delete tempPoint;
+ 	}
+
+ 	homogeneousTrans = new HomogeneousMatrix44(
+			tempHomogenousMatrix[0], tempHomogenousMatrix[4], tempHomogenousMatrix[8],
+			tempHomogenousMatrix[1], tempHomogenousMatrix[5], tempHomogenousMatrix[9],
+			tempHomogenousMatrix[2], tempHomogenousMatrix[6], tempHomogenousMatrix[10],
+			xtranslation,ytranslation,ztranslation);
+ 	finalModel->homogeneousTransformation(homogeneousTrans);
+ 	pclTypecaster.convertToPCLDataType(estimated_model_ptr,finalModel);
 	estimated_model_ptr->header.frame_id = "/openni_rgb_optical_frame";
 	modelPublisher->publish(*estimated_model_ptr);
 
 	delete in_cloud;
+	delete finalModel;
 	delete finalModel2D;
 	delete finalModel3D;
 	delete transformedCubeModel2D;
 	delete transformedCubeModel3D;
+	delete bestTransformation;
+	delete homogeneousTrans;
 }
 }

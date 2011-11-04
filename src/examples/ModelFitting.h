@@ -25,6 +25,7 @@
 #include "sensor_msgs/point_cloud_conversion.h"
 #include "ros/publisher.h"
 #include "pcl_ros/point_cloud.h"
+#include <tf/transform_broadcaster.h>
 
 //BRICS_3D headers
 #include "IterativeClosestPoint.h"
@@ -88,6 +89,14 @@ class ModelFitting {
 	 */
 	float bestScore;
 
+	/**
+	 * Best translation found   by the model fitting process
+	 */
+	float xtranslation;
+	float ytranslation;
+	float ztranslation;
+
+	Eigen::Matrix4f* bestTransformation;
 
 	/**
 	 * Helper function to calculate a homogeneous matrix for affine-transformation
