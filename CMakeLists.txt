@@ -70,12 +70,14 @@ target_link_libraries(modelFittingICP
 
 										
 #executable for 6D Pose Estimation
-rosbuild_add_executable(gopalPoseEstimator6D src/PoseEstimation6DNode.cpp 
+rosbuild_add_executable(poseEstimator6D src/PoseEstimation6DNode.cpp 
 						src/examples/PoseEstimation6D lib/IterativeClosestPoint lib/EuclideanClustering)
-target_link_libraries(gopalPoseEstimator6D   
+target_link_libraries(poseEstimator6D   
 										brics_3dpm_util brics_3dpm_algorithm brics_3dpm_core ANN)
 										
-#executable for controlling perception system
-rosbuild_add_executable(gopalPerceptionEngineController src/ControlPerception.cpp)
+#executable for controlling the perception system
+rosbuild_add_executable(perceptionEngineController src/ControlPerception.cpp)
 
+#executable for configuring the perception system
+rosbuild_add_executable(perceptionEngineConfigurator src/ConfigurePerception.cpp)
 

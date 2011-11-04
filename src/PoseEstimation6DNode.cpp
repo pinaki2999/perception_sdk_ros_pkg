@@ -10,6 +10,7 @@
 #include <ros/ros.h>
 #include "sensor_msgs/PointCloud2.h"
 #include "perception_sdk_ros_pkg/Coordination.h"
+#include "perception_sdk_ros_pkg/Configuration.h"
 #include "ros/publisher.h"
 
 //PCL specific Headers
@@ -31,28 +32,126 @@
 //global variables
 std::vector<BRICS_3D::PoseEstimation6D*> poseEstimators;
 bool perceptionPaused;
-int maxNoOfObjects;
-int noOfRegions;
+unsigned int maxNoOfObjects;
+unsigned int noOfRegions;
 
 
 void kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 	if(!perceptionPaused){
-		for(int i=0; i<noOfRegions;i++){
+		for(unsigned int i=0; i<noOfRegions;i++){
 			//			ROS_INFO("received a kinect message...");
 			poseEstimators[i]->kinectCloudCallback(cloud);
 		}
 	} else {
-		ROS_INFO("Perception Engine Paused");
+//		ROS_INFO("Perception Engine Paused");
 	}
 }
 
+
 void perceptionControlCallback(const perception_sdk_ros_pkg::Coordination message){
+
+
 
 	if(!message.command.compare("pause")){
 		perceptionPaused=true;
+		ROS_WARN("Pausing Perception Engine");
 	}else if(!message.command.compare("resume")){
 		perceptionPaused=false;
+		ROS_WARN("Resuming Perception Engine");
 	}
+
+}
+
+
+void perceptionConfigurationCallback(const perception_sdk_ros_pkg::Configuration message){
+
+	//Checking if the new configuration is valid or not
+	std::vector< std::string > configFiles;
+	boost::split(configFiles, message.config_files, boost::is_any_of(" "));
+//	ROS_WARN("[CHEAT] %s", message.labels.c_str() );
+	std::vector< std::string > labels;
+	boost::split(labels, message.labels, boost::is_any_of(" "));
+
+	std::ifstream configFileStream;
+
+	unsigned int noOfRegions_ = message.no_of_regions;
+
+
+	if(configFiles.size()!=noOfRegions_ ){
+			ROS_WARN("Invalid configuration setting received: not enough config files");
+//			ROS_WARN("[CHEAT] %d %d", configFiles.size(), noOfRegions_ );
+			return;
+	}
+
+	if(labels.size()!=noOfRegions_ ){
+		ROS_WARN("Invalid configuration setting received: not enough labels");
+//		ROS_WARN("[CHEAT] %d %d", labels.size(), noOfRegions_ );
+		return;
+	}
+	for(unsigned int i = 0; i<noOfRegions_; i++){
+		configFileStream.open(configFiles[i].c_str());
+		if ( configFileStream.is_open() ) {     //if file exists
+			configFileStream.close();
+		} else {
+			ROS_WARN("Configuration file: '%s' not found!!", configFiles[i].c_str());
+			ROS_WARN("Invalid configuration setting received");
+			return;
+		}
+	}
+	//Setting up new configuration
+	perceptionPaused=true;
+	ROS_WARN("Pausing Perception Engine");
+
+	maxNoOfObjects = message.max_no_of_objects;
+	noOfRegions = noOfRegions_;
+
+	if(poseEstimators.size() < noOfRegions){
+		for(unsigned int i=0; i< noOfRegions-poseEstimators.size(); i++){
+			poseEstimators.push_back(new BRICS_3D::PoseEstimation6D());
+		}
+	}
+
+	//define the HSV limit variables;
+	float minLimitH[noOfRegions], minLimitS[noOfRegions],
+	maxLimitH[noOfRegions], maxLimitS[noOfRegions];
+
+	for(unsigned int i = 0; i<noOfRegions; i++){
+		configFileStream.open(configFiles[i].c_str());
+		if ( configFileStream.is_open() ) {     //if file exists
+			std::string s;
+			while(getline(configFileStream, s)){    //extract the values of the parameters
+				std::vector< std::string > tempVec;
+				boost::split(tempVec, s, boost::is_any_of("="));
+				if(!tempVec[0].compare("minH")) {
+					minLimitH[i] = atof(tempVec[1].c_str());
+				} else if(!tempVec[0].compare("maxH")) {
+					maxLimitH[i] = atof(tempVec[1].c_str());
+				} else if(!tempVec[0].compare("minS")) {
+					minLimitS[i] = atof(tempVec[1].c_str());
+				} else if(!tempVec[0].compare("maxS")) {
+					maxLimitS[i] = atof(tempVec[1].c_str());
+				}
+			}
+			configFileStream.close();
+		} else {
+			ROS_ERROR("Configuration file: %s not found!!", configFiles[i].c_str());
+			exit(0);
+		}
+
+		//Setting the max-no of objects to be searched for
+		poseEstimators[i]->setMaxNoOfObjects(maxNoOfObjects);
+		//Setting the label which will be used to publish the transforms
+		poseEstimators[i]->setRegionLabel(labels[i]);
+		//Initializing the limits in HSV space to extract the ROI
+		poseEstimators[i]->initializeLimits(minLimitH[i], maxLimitH[i], minLimitS[i], maxLimitS[i]);
+		//Initializing the cluster extractor limits
+		//ToDo Allow configurating these parameters too
+		poseEstimators[i]->initializeClusterExtractor(200,10000,0.01);
+	}
+
+	perceptionPaused=false;
+	ROS_WARN("Resuming Perception Engine");
+
 
 }
 
@@ -92,7 +191,7 @@ int main(int argc, char* argv[]){
 
 	//parse the configuration files and set up the HSV limits and set up the pose estimators
 	std::ifstream configFileStream;
-	for (int i = 0; i< noOfRegions; i++){
+	for (unsigned int i = 0; i< noOfRegions; i++){
 
 		poseEstimators.push_back(new BRICS_3D::PoseEstimation6D());
 
@@ -133,9 +232,14 @@ int main(int argc, char* argv[]){
 	ros::Subscriber  perceptionControlSubscriber;
 	perceptionControlSubscriber= nh.subscribe("/perceptionControl", 1,&perceptionControlCallback);
 
+	//subscribe to perception engine configuration messsage
+	ros::Subscriber  perceptionConfigurationSubscriber;
+	perceptionConfigurationSubscriber= nh.subscribe("/perceptionConfiguration", 1,&perceptionConfigurationCallback);
+
+
 	//subscribe to kinect point cloud messages
 	ros::Subscriber  kinectCloudSubscriber[noOfRegions];
-	for (int i = 0; i < noOfRegions ; i++){
+	for (unsigned int i = 0; i < noOfRegions ; i++){
 		kinectCloudSubscriber[i]= nh.subscribe("/camera/rgb/points", 1,&kinectCloudCallback);
 		poseEstimators[i]->setMaxNoOfObjects(maxNoOfObjects);
 	}
