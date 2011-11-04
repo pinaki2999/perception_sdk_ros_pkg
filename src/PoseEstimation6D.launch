@@ -1,6 +1,12 @@
 <launch>
 
-	<node name="gopalPoseEstimator6D" pkg="perception_sdk_ros_pkg" type="gopalPoseEstimator6D" 
+<!-- Arguments required by the node -->
+<!-- No of regions of interests to be extracted -->
+<!-- Maximum number of object to be found in each ROI -->
+<!-- HSV-Limits Configuration Files with full path -->
+<!-- Region Labes used by the nodes to publish the transforms -->
+
+	<node name="poseEstimator6D" pkg="perception_sdk_ros_pkg" type="poseEstimator6D" 
 					args="2 3 $(find perception_sdk_ros_pkg)/redRoiConfig.cfg 
 					$(find perception_sdk_ros_pkg)/greenRoiConfig.cfg red green" />
 
