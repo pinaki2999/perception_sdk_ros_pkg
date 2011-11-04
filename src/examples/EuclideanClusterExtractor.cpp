@@ -10,6 +10,7 @@
 namespace BRICS_3D{
 
 EuclideanClusterExtractor::EuclideanClusterExtractor() {
+	centroid3DEstimator = new BRICS_3D::Centroid3D();
 	maxNoOfObjects = 3;
 }
 
@@ -32,7 +33,9 @@ void EuclideanClusterExtractor::setExtractedClusterPublisher(ros::Publisher *ext
 	this->extractedClusterPublisher = extractedClusterPublisher;
 }
 
-EuclideanClusterExtractor::~EuclideanClusterExtractor() {}
+EuclideanClusterExtractor::~EuclideanClusterExtractor() {
+	delete centroid3DEstimator;
+}
 
 
 void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
@@ -68,7 +71,7 @@ void EuclideanClusterExtractor::kinectCloudCallback(const sensor_msgs::PointClou
     for (int i = 0; i < regions; i++){
 
     	if(extracted_clusters[i]->getSize() > 0){
-    	Eigen::Vector3d centroid3d = centroid3DEstimator.computeCentroid(extracted_clusters[i]);
+    	Eigen::Vector3d centroid3d = centroid3DEstimator->computeCentroid(extracted_clusters[i]);
 
     	pclTypecaster.convertToPCLDataType(tempCloud, extracted_clusters[i]);
     	tempCloud->header.frame_id = "/openni_rgb_optical_frame";

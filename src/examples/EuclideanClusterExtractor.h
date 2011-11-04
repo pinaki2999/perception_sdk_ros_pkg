@@ -47,7 +47,7 @@ private:
 	/**
 	 * Object for estimating 3D centroids of the estimated object clusters
 	 */
-	BRICS_3D::Centroid3D centroid3DEstimator;
+	BRICS_3D::Centroid3D* centroid3DEstimator;
 
 	/**
 	 * Maximum number of object clusters which will be published.

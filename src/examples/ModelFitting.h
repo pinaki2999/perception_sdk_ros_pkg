@@ -39,7 +39,7 @@ class ModelFitting {
 	/**
 	 * Object for performing ICP
 	 */
-	BRICS_3D::SDK::IterativeClosestPoint poseEstimatorICP;
+	BRICS_3D::SDK::IterativeClosestPoint* poseEstimatorICP;
 
 	/**
 	 * two-sided cube model

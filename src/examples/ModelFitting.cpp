@@ -37,11 +37,14 @@ ModelFitting::ModelFitting() {
 	ROS_INFO("Initialization Done....");
 	reliableScoreThreshold = 0.00008;
 	bestScore = 1000;
+
+	poseEstimatorICP = new BRICS_3D::SDK::IterativeClosestPoint();
 }
 
 ModelFitting::~ModelFitting() {
 	delete cube2D;
 	delete cube3D;
+	delete poseEstimatorICP;
 }
 
 void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
@@ -101,16 +104,16 @@ void ModelFitting::kinectCloudCallback(const sensor_msgs::PointCloud2 &cloud){
 	transformedCubeModel3D->homogeneousTransformation(homogeneousTrans);
 
 	//Performing 2D model alignment
-	poseEstimatorICP.setDistance(0.1);
-	poseEstimatorICP.setMaxIterations(1000);
-	poseEstimatorICP.setObjectModel(transformedCubeModel2D);
-	poseEstimatorICP.estimateBestFit(in_cloud, finalModel2D);
-	float score2D = poseEstimatorICP.getFitnessScore();
+	poseEstimatorICP->setDistance(0.1);
+	poseEstimatorICP->setMaxIterations(1000);
+	poseEstimatorICP->setObjectModel(transformedCubeModel2D);
+	poseEstimatorICP->estimateBestFit(in_cloud, finalModel2D);
+	float score2D = poseEstimatorICP->getFitnessScore();
 
 	//Performing 3D model alignment
-	poseEstimatorICP.setObjectModel(transformedCubeModel3D);
-	poseEstimatorICP.estimateBestFit(in_cloud, finalModel3D);
-	float score3D = poseEstimatorICP.getFitnessScore();
+	poseEstimatorICP->setObjectModel(transformedCubeModel3D);
+	poseEstimatorICP->estimateBestFit(in_cloud, finalModel3D);
+	float score3D = poseEstimatorICP->getFitnessScore();
 
 	if(score2D<score3D){
 		//publish model estimated using two sided cube
